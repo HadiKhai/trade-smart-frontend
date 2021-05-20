@@ -39,7 +39,7 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={hist}>
             <Switch>
-              <Route path="/admin/:useraddress?" component={Admin} />
+              <Route path="/admin" component={Admin} />
               <Redirect from="/" to="/admin/dashboard" />
             </Switch>
         </Router>

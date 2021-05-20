@@ -1,4 +1,4 @@
-import React from "react";
+ import React from "react";
 import TradingViewWidget, {BarStyles, Themes} from 'react-tradingview-widget';
 
 // @material-ui/core components

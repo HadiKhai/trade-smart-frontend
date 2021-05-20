@@ -44,8 +44,22 @@ const GetStockInfo = ({symbol}) => {
     })
 }
 
+const GetStockSymbol = ({name}) => {
+
+    let req = `/search?q=${name}&token=c2ipksaad3i8gi7prg70`
+
+    return new Promise((resolve, reject) => {
+        axiosStockAPI.get(req).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+
 export {
     CheckUsername,
     GetStocks,
-    GetStockInfo
+    GetStockInfo,
+    GetStockSymbol
 };

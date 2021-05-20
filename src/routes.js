@@ -31,6 +31,7 @@ import Chart from "views/Chart/Chart.js";
 import Discussion from "views/Discussion/Discussion.js";
 import Home from "views/Home/Home";
 import New from "./views/New/New";
+import Trade from "./views/Trade/Trade";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -47,6 +48,13 @@ const dashboardRoutes = [
         name: "Stocks",
         icon: ShowChartOutlinedIcon,
         component: SignalPage,
+        layout: "/admin"
+    },
+    {
+        path: "/trade/:stockId?",
+        name: "Trade",
+        icon: ShowChartOutlinedIcon,
+        component: Trade,
         layout: "/admin"
     },
   {
