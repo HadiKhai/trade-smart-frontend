@@ -18,9 +18,11 @@ import {infoColor} from "../../assets/jss/material-dashboard-react";
 import {Backdrop, createMuiTheme, Fade, InputAdornment, Modal, TextField} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import {GetDiscussions, GetStocks, postDiscussion} from "../../api/queries";
+import {useAuth} from "../../store/hooks/auth/useAuth";
 
 export default function Discussion() {
     const [openModal, setOpenModal] = useState(false);
+    const {id} = useAuth()
 
     const myDiscussions = [
         {
@@ -277,6 +279,7 @@ export default function Discussion() {
                               refreshData(resultsFilter, resultsSearchFilter, true)
                           }
                           }
+                          disabled={!id}
                           name="subscribedOnly"
                           color="primary"
                       />
@@ -286,7 +289,8 @@ export default function Discussion() {
           </GridItem>
           <GridItem xs={3} sm={3} md={3}>
           <Button variant="contained" size="large" className={classes.createNew}
-                  onClick={() => setOpenModal(!openModal)}>
+                  onClick={() => setOpenModal(!openModal)}
+          disabled={!id}>
               Create New Discussion</Button>
           </GridItem>
           {discussions.map((discussion) => (
