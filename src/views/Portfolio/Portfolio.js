@@ -39,7 +39,7 @@ const useStyle = makeStyles((theme) => ({
 
 
 
-export default function New() {
+export default function Portfolio() {
     const classes = useStyle();
 
 

@@ -137,7 +137,7 @@ export default function StockTable({filter}) {
                             <TableCell align="center" style={{color:colorChange(stock)}}>{((stocksInfo[stock.abbreviation].c-stocksInfo[stock.abbreviation].pc)*100/stocksInfo[stock.abbreviation].pc).toPrecision(2)}%</TableCell>
                             <TableCell align="center">
                                 <Link
-                                to={"/admin/trade/" + stock.id}>
+                                to={"/app/trade/" + stock.id}>
                                     Trade
                                 </Link>
                             </TableCell>

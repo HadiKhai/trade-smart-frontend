@@ -142,7 +142,9 @@ const useStyle = makeStyles((theme) => ({
             alignItems: "center",
         },
         main: {
-            height: 50
+            height: 50,
+            margin:10,
+            marginBottom:20
         },
     }
 ))
@@ -156,6 +158,7 @@ export default function Trade() {
     const [search, setSearch] = useState(false)
     const {stockId} = useParams();
 
+    const [id,setId] = useState(stockId)
     const [symbol,setSymbol] = useState("")
 
 
@@ -180,20 +183,40 @@ export default function Trade() {
     // },[stocks])
     //
 
+    const findStockByName = (name) => {
+        return stocks.find((x) => {
+            return x.name === name
+        })
+    }
+
+    const findStockById = (id) => {
+        return stocks.find((x) => {
+            return x.id === id
+        })
+    }
+
 
     const showGraphs = () => {
-        if(stockId!==":stockId" || stocks.find((x) => {
-            return x.name === stockSearch
-        })){
+        if((id!==":stockId" && id!=="" )|| findStockByName(stockSearch)!==undefined){
             return true
         }
         return false
     }
 
-    console.log(showGraphs())
+    const findStock = () => {
+        const stockBySearch = findStockByName(stockSearch)
+        const stockById = findStockById(id)
+
+        if(stockBySearch){
+            return stockBySearch
+        }
+        if(id!=="") {
+            return stockById
+        }
+    }
     return (
         <GridContainer>
-            <GridItem xs={12} sm={12} md={12}>
+            <GridItem xs={12} sm={12} md={12} >
                 <Box display="flex" align="left" flexdirection="row" className={classes.main}>
                     <Box className={classes.search}>
                         {icon()}
@@ -202,7 +225,10 @@ export default function Trade() {
                     <Box className={classes.searchStock}>
                         {search && <SearchBar
                             value={stockSearch}
-                            onChange={(newValue) => setStockSearch(newValue)}
+                            onChange={(newValue) => {
+                                setStockSearch(newValue)
+                                setId("")
+                            }}
                             onRequestSearch={(newValue) => setStockSearch(newValue)}
                             onCancelSearch={(() => setStockSearch(""))}
                             style={{marginRight: 10, marginLeft: 10}}
@@ -214,7 +240,7 @@ export default function Trade() {
             <GridItem xs={12} sm={12} md={12}>
                 <Box display="flex" align="left" flexdirection="row">
                     <Box>
-                        <TradingViewWidget symbol="NASDAQ:AAPL"
+                        <TradingViewWidget symbol={`NASDAQ:${findStock().abbreviation}`}
                                            style={BarStyles.LINE}
                                            theme={Themes.DARK}
                         />

@@ -39,7 +39,6 @@ const GetDiscussion = (discussionId) => {
     })
 }
 
-
 const GetDiscussions = ({stockId, search}) => {
     let req = '/Discussion/All'
     return new Promise ((resolve, reject) =>{
@@ -91,6 +90,21 @@ const GetStocks = () => {
     })
 }
 
+const GetUserDetails = ({id}) => {
+    let req = `/User/${id}`;
+
+    console.log(req)
+    return new Promise ((resolve, reject) => {
+        axiosInstance().get(req).then((res)=> {
+            let result = res.data
+            resolve(result)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+
+
 const GetStockInfo = ({symbol}) => {
 
     let req = `/quote?symbol=${symbol}&token=c2ipksaad3i8gi7prg70`
@@ -104,10 +118,11 @@ const GetStockInfo = ({symbol}) => {
     })
 }
 
-const GetStockSymbol = ({name}) => {
 
-    let req = `/search?q=${name}&token=c2ipksaad3i8gi7prg70`
 
+const GetStockNews = ({symbol,from,to}) => {
+
+    let req = `company-news?symbol=${symbol}&from=${from}&to=${to}&token=c2ipksaad3i8gi7prg70`
     return new Promise((resolve, reject) => {
         axiosStockAPI.get(req).then((res)=>{
             resolve(res.data)
@@ -121,10 +136,11 @@ export {
     CheckUsername,
     GetStocks,
     GetStockInfo,
-    GetStockSymbol,
+    GetStockNews,
     postDiscussion,
     CheckEmail,
     GetDiscussions,
     GetDiscussion,
     GetDiscussionMessages,
+    GetUserDetails
 };

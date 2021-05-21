@@ -121,7 +121,7 @@ ajv                        6.9.1   →   6.10.0
 - **src/components/Snackbar/SnackbarContent.jsx**
 - **src/components/Tasks/Tasks.jsx**
 - **src/views/Notifications/Notifications.jsx**
-### New components
+### Portfolio components
 - **src/components/FixedPlugin/FixedPlugin.jsx**(Left menu used by us for customization - due to this, we've had to add a link for the fonts awesome cdn)
 - **src/components/Header/RTLHeaderLinks.jsx**
 - **src/layouts/Admin.jsx** (instead of Signals)
@@ -256,7 +256,7 @@ ajv                        6.9.1   →   6.10.0
   - `src/components/Cards/StatsCard.jsx`
   - `src/components/Cards/TasksCard.jsx`
 ### Added components
-- New card components (`src/components/Card/*`) instead of `src/components/Cards/*`
+- Portfolio card components (`src/components/Card/*`) instead of `src/components/Cards/*`
   - `src/components/Card/Card.jsx`
   - `src/components/Card/CardAvatar.jsx`
   - `src/components/Card/CardBody.jsx`

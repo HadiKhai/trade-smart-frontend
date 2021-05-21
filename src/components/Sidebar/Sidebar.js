@@ -111,14 +111,20 @@ export default function Sidebar(props) {
   var links = (
     <List className={classes.list}>
       {routes.map((prop, key) => {
-        const listItemClasses = classNames({
-            [" " + classes[color]]: activeRoute(prop.layout + prop.path)
+          const path = prop.path
+
+          const temp = "/"+path.split("/")[1]
+          // con
+          //     "/"+prop.path.split("/")[1]
+          //
+
+          const listItemClasses = classNames({
+            [" " + classes[color]]: activeRoute(prop.layout + temp)
         });
 
         const whiteFontClasses = classNames({
-          [" " + classes.blueFont]: !activeRoute(prop.layout + prop.path)
+          [" " + classes.blueFont]: !activeRoute(prop.layout + temp)
         });
-
 
         return (
           <NavLink

@@ -31,7 +31,7 @@ import SignalPage from "views/Stocks/Stocks.js";
 import Chart from "views/Chart/Chart.js";
 import Discussion from "views/Discussion/Discussion.js";
 import Home from "views/Home/Home";
-import New from "./views/New/New";
+import Portfolio from "views/Portfolio/Portfolio";
 import Trade from "./views/Trade/Trade";
 import DiscussionID from "./views/Discussion/DiscussionID";
 // core components/views for RTL layout
@@ -84,7 +84,7 @@ const dashboardRoutes = [
     path: "/portfolio",
     name: "Portfolio",
     icon: MonetizationOnOutlinedIcon,
-    component: New,
+    component: Portfolio,
     layout: "/app"
   },
 
