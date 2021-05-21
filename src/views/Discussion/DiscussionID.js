@@ -28,6 +28,8 @@ import {
 import {useAuth} from "../../store/hooks/auth/useAuth";
 import {useParams} from "react-router";
 import {useUser} from "../../store/hooks/user/useUser";
+import Pagination from "@material-ui/lab/Pagination";
+import {number} from "prop-types";
 
 export default function Discussion() {
 
@@ -51,6 +53,19 @@ export default function Discussion() {
             marginTop: '15px',
             marginBottom: '5px',
         },
+        customPaginator: {
+            marginTop: '20px',
+            paddingLeft: "15px",
+            "& .MuiPaginationItem-rounded": {
+                backgroundColor: "rgba(255,255,255,0.5)"
+            },
+            "& .MuiPaginationItem-page.Mui-selected": {
+                backgroundColor: "#fff"
+            },
+            "& .MuiPaginationItem-rounded:hover": {
+                backgroundColor: "#fff"
+            }
+        }
 
     }));
     const classes = useStyles();
@@ -120,17 +135,26 @@ export default function Discussion() {
     const [discussionInfo, setDiscussionInfo] = useState([])
     const [messages, setMessages] = useState([])
     const [comment, setComment] = useState("")
+    const [page, setPage] = useState(0)
 
     let fetchMessages = false;
     const sendComment = (content) => {
         postMessage({content,discussionId}).then(()=>{
-            GetDiscussionMessages(discussionId,0).then((messages)=>{
-                setMessages(messages)
+            GetMessages(page)
+            GetDiscussion(discussionId).then((messages)=>{
+                setDiscussionInfo(messages)
             })
         })
         fetchMessages = !fetchMessages
     }
 
+    const GetMessages = (page) => {
+        console.log(page)
+        GetDiscussionMessages(discussionId, page).then((messages) => {
+            setMessages(messages)
+            console.log(messages)
+        })
+    }
     useEffect(()=> {
         GetDiscussion(discussionId).then((messages)=>{
             setDiscussionInfo(messages)
@@ -144,6 +168,10 @@ export default function Discussion() {
             console.log(messages)
         })
     },[])
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
 
     // const refreshData = (stock, search, onlySubscribed) => {
     //     let stockId = stock.id==undefined?"":stock.id
@@ -185,9 +213,12 @@ export default function Discussion() {
                           {discussionInfo.title}
                           <br />
                       </Typography>
+                      <Grid xs={12} md={12} lg={12} className={classesCustom.textf}>
+                            {discussionInfo.description}
+                      </Grid>
                   </CardContent>
                   <CardActions>
-                      <Button size="large">{messages.length} Comments</Button>
+                      <Button size="large">{discussionInfo.messageCount} Comments</Button>
                       <Button size="large" onClick={(e) => {
                           e.stopPropagation()
                           console.log("Share Discussion:"+discussionInfo.id)
@@ -224,7 +255,12 @@ export default function Discussion() {
               </Card>
           </GridItem>
           ))}
-
+          <Pagination count={Math.ceil(discussionInfo.messageCount/10)} className={classes.customPaginator}
+                      variant="outlined" shape="rounded" onChange={(event, page)=>
+          {
+              setPage(page-1)
+              GetMessages(page-1)
+          }}/>
           <GridItem xs={12} sm={12} md={12}>
               <Card variant="outlined"
                     onClick={() => console.log("clicked Card:"+discussionInfo.id)}

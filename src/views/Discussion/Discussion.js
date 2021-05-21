@@ -134,8 +134,10 @@ export default function Discussion() {
     const createDiscussion = () => {
         let title = discussionName
         let stockId = discussionStock.id
-        postDiscussion({title, stockId}).then((res)=> {
+        let description = discussionDescription
+        postDiscussion({title, stockId, description}).then((res)=> {
             setOpenModal(false)
+            // '/app/discussion/'+res.id) //TODO route
         }).catch((err)=> {
         })
 

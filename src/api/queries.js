@@ -1,13 +1,13 @@
 import axiosInstance from "../utils/axiosInstance";
 import {axiosStockAPI} from "../config/axios";
 
-const postDiscussion = ({title,stockId}) => {
+const postDiscussion = ({title,stockId, description}) => {
     let req = '/Discussion'
     return new Promise ((resolve, reject) =>{
 
         axiosInstance()
         .post(req, {
-            title,stockId
+            title,description,stockId
         }).then((res)=> {
             resolve(res.data)
         }).catch((err)=> {
