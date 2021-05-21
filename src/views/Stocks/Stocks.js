@@ -51,7 +51,8 @@ const styles = {
         alignItems: "center",
     },
     main: {
-        height: 50
+        height: 50,
+        margin:10
     },
 };
 

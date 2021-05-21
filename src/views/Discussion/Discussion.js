@@ -197,9 +197,6 @@ export default function Discussion() {
         }).catch((err)=> {
         })
 
-        console.log(discussionName);
-        console.log(discussionStock.id);
-        console.log(discussionDescription);
     }
 
     useEffect(()=> {
@@ -213,7 +210,6 @@ export default function Discussion() {
         let search = ""
         GetDiscussions({stockId, search}).then((res)=>{
             setDiscussions(res)
-            console.log(res)
         })
     },[])
 
@@ -222,13 +218,11 @@ export default function Discussion() {
         if(onlySubscribed) {
             GetDiscussions({stockId, search}).then((res) => {
                 setDiscussions(res)
-                console.log(res)
             })
         }
         else{
             GetDiscussions({stockId, search}).then((res) => {
                 setDiscussions(res)
-                console.log(res)
             })
         }
     }
@@ -287,7 +281,7 @@ export default function Discussion() {
 
               />
           </GridItem>
-          <GridItem xs={3} sm={3} md={3}>
+          <GridItem xs={2} sm={2} md={2}>
           <Button variant="contained" size="large" className={classes.createNew}
                   onClick={() => setOpenModal(!openModal)}
           disabled={!id}>

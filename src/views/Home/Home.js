@@ -1,13 +1,26 @@
- import React from "react";
+ import React, {useEffect, useState} from "react";
 import TradingViewWidget, {BarStyles, Themes} from 'react-tradingview-widget';
 
 // @material-ui/core components
 import {makeStyles} from "@material-ui/core/styles";
 // core components
 import {infoColor} from "../../assets/jss/material-dashboard-react";
-import {TextField,} from "@material-ui/core";
+import {TableCell, TableContainer, TextField,} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+ import {useStocks} from "../../store/hooks/stocks/useStocks";
+ import {GetStockInfo} from "../../api/queries";
+ import GridContainer from "../../components/Grid/GridContainer";
+ import GridItem from "../../components/Grid/GridItem";
+ import Table from "@material-ui/core/Table";
+ import TableHead from "@material-ui/core/TableHead";
+ import TableRow from "@material-ui/core/TableRow";
+ import TableBody from "@material-ui/core/TableBody";
+ import {Link} from "react-router-dom";
+ import CardHeader from "../../components/Card/CardHeader";
+ import CardBody from "../../components/Card/CardBody";
+ import StockTable from "../../components/Table/StockTable";
+ import Card from "../../components/Card/Card";
 
 const useStyle = makeStyles((theme) => ({
         cardCategoryWhite: {
@@ -128,57 +141,74 @@ const useStyle = makeStyles((theme) => ({
 export default function Home() {
     const classes = useStyle();
 
+    const {stocks} = useStocks()
+    const [stocksInfo,setStocksInfo] =useState(stocks)
+
+    const [stockChanges,setStockChanges] = useState({})
+    useEffect(()=> {
+
+        async function fetchMyAPI() {
+            let obj = []
+            for (const stock of stocks) {
+                const symbol = stock.abbreviation
+                const resp =await GetStockInfo({symbol})
+                resp.change = ((resp.c-resp.pc)*100/resp.pc).toPrecision(2)
+                const temp = {...stock,...resp}
+                obj.push(temp)
+            }
+            setStocksInfo(obj)
+        }
+        fetchMyAPI()
+
+    },[stocks])
+
 
     return (
-        <Box display="flex" align="left" flexdirection="row" className={classes.main}>
-            <Box>
-                <TradingViewWidget symbol="NASDAQ:AAPL"
-                                   style={BarStyles.LINE}
-                                   theme={Themes.DARK}
-                />
-            </Box>
-            <Box flexGrow={1} display="flex" align="center" flexdirection="column" className={classes.bet}>
-
-                <Box p={3} flexGrow={1}>
-                    <TextField
-                        id="standard-basic"
-                        className={classes.textf}
-                        InputLabelProps={{
-                            classes: {
-                                root: classes.label
-                            }
-                        }}
-                        placeholder="Amount"
-                        InputProps={{
-                            classes: {
-                                root: classes.input,
-                                focused: classes.focused // we can't forget to pass this in or &$focused in our input class won't work
-                            },
-                        }}
-                    />
-                    <Box display="flex" align="center" flexdirection="row">
-                        <Box flexGrow={1}>
-                            <Button
-                                className={classes.buy}
-                                variant="contained"
-                            >
-                                Buy
-                            </Button>
-                        </Box>
-                        <Box flexGrow={1}>
-                            <Button
-                                className={classes.sell}
-                                variant="contained"
-                            >
-                                Sell
-                            </Button></Box>
-                    </Box>
-
-                </Box>
-            </Box>
-        </Box>
+        <GridContainer>
+            <GridItem xs={12} sm={12} md={12}>
+                <Card>
+                    <CardHeader color="info">
+                        <h4 className={classes.cardTitleWhite}>Hottest Stocks</h4>
+                    </CardHeader>
+                    <CardBody>
+                        <TableContainer>
+                            <Table  stickyHeader style={{backgroundColor: "#f0f0f0"}}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">Stock Name</TableCell>
+                                        <TableCell align="center">Current Price</TableCell>
+                                        <TableCell align="center">Change</TableCell>
+                                        <TableCell align="center">Trade</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {stocksInfo.length !==0 &&
+                                    stocksInfo.sort((a, b) => parseFloat(b.change) - parseFloat(a.change)).slice(0, 2).map((stock) => (
+                                        <TableRow  className={classes.root}>
+                                            <TableCell align="center">{stock.name} </TableCell>
+                                            <TableCell align="center">{stock.c}</TableCell>
+                                            <TableCell align="center">{stock.change}%</TableCell>
+                                            <TableCell align="center">
+                                                <Link
+                                                    to={"/app/trade/" + stock.id}>
+                                                    Trade
+                                                </Link>
+                                            </TableCell>
 
 
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </CardBody>
+                </Card>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={12}>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={12}>
+            </GridItem>
+        </GridContainer>
     );
 }
 
