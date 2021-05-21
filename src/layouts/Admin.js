@@ -22,7 +22,7 @@ import {useAuth} from "../store/hooks/auth/useAuth";
 const switchRoutes = (
   <Switch>
     {routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/app") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -33,7 +33,7 @@ const switchRoutes = (
       }
       return null;
     })}
-    <Redirect from="/admin" to="/admin/home" />
+    <Redirect from="/app" to="/app/home" />
   </Switch>
 );
 

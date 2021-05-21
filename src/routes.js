@@ -40,35 +40,35 @@ const dashboardRoutes = [
     name: "Home",
     icon: HomeOutlinedIcon,
     component: Home,
-    layout: "/admin"
+    layout: "/app"
   },
     {
         path: "/stocks",
         name: "Stocks",
         icon: ShowChartOutlinedIcon,
         component: SignalPage,
-        layout: "/admin"
+        layout: "/app"
     },
   {
     path: "/prediction",
     name: "Prediction",
     icon: DeveloperBoardOutlinedIcon,
     component: Chart,
-    layout: "/admin"
+    layout: "/app"
   },
   {
     path: "/discussion",
     name: "Discussion",
     icon: ForumOutlinedIcon,
     component: Discussion,
-    layout: "/admin"
+    layout: "/app"
   },
   {
     path: "/portfolio",
     name: "Portfolio",
     icon: MonetizationOnOutlinedIcon,
     component: New,
-    layout: "/admin"
+    layout: "/app"
   },
 
 
