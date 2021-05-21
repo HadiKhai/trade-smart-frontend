@@ -25,6 +25,7 @@ import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import AccessibilityOutlinedIcon from '@material-ui/icons/AccessibilityOutlined';
 import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 import ShowChartOutlinedIcon from '@material-ui/icons/ShowChartOutlined';
+import ListIcon from '@material-ui/icons/List';
 // core components/views for Admin layout
 import SignalPage from "views/Stocks/Stocks.js";
 import Chart from "views/Chart/Chart.js";
@@ -46,7 +47,7 @@ const dashboardRoutes = [
     {
         path: "/stocks",
         name: "Stocks",
-        icon: ShowChartOutlinedIcon,
+        icon: ListIcon,
         component: SignalPage,
         layout: "/admin"
     },

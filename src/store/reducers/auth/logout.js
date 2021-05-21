@@ -1,7 +1,7 @@
 import {LOGOUT_USER} from "../../types/auth";
 
 
-const auth = (state, { payload, type }) => {
+const logout = (state, { payload, type }) => {
     switch (type) {
         case LOGOUT_USER:
             return {
@@ -16,4 +16,4 @@ const auth = (state, { payload, type }) => {
     }
 };
 
-export default auth;
+export default logout;

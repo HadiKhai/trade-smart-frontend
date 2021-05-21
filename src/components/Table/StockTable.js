@@ -18,6 +18,7 @@ import Button from "@material-ui/core/Button";
 import {GetStockInfo, GetStocks} from "../../api/queries";
 import {useParams} from "react-router";
 import {Link} from "react-router-dom";
+import {useStocks} from "../../store/hooks/stocks/useStocks";
 
 const styles = {
     cardCategoryWhite: {
@@ -69,20 +70,14 @@ const useStyles = makeStyles(styles);
 export default function StockTable({filter}) {
     const classes = useStyles();
 
-    const [stocks, setStocks] = useState([])
     const [stocksInfo,setStocksInfo] = useState({})
     const [filteredStocks,setFilteredStock] = useState([])
-
-    const {stockid} = useParams();
-    useEffect(()=> {
-        GetStocks().then((res)=>{
-            const temp = res.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-            setStocks(res)
-            setFilteredStock(temp)
-        })
-    },[])
+    const {stocks} = useStocks()
 
     useEffect(()=> {
+
+            setFilteredStock(stocks)
+
         async function fetchMyAPI() {
             let obj = {}
             for (const stock of stocks) {
@@ -112,9 +107,6 @@ export default function StockTable({filter}) {
         }
     }
 
-
-
-    console.log(stockid)
     return (
         <TableContainer>
             <Table  stickyHeader style={{backgroundColor: "#f0f0f0"}}>

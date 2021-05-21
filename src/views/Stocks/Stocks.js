@@ -53,9 +53,6 @@ const styles = {
     main: {
         height: 50
     },
-    cell:{
-
-    }
 };
 
 const useStyles = makeStyles(styles);
@@ -76,6 +73,7 @@ export default function Stocks() {
             setSearch(true)
         }} style={{cursor: "pointer"}}/>)
     }
+
     return (
         <GridContainer>
             <GridItem xs={12} sm={12} md={12}>
@@ -96,16 +94,14 @@ export default function Stocks() {
                 </Box>
             </GridItem>
             <GridItem xs={12} sm={12} md={12}>
-                <GridItem xs={12} sm={12} md={12}>
-                    <Card>
-                        <CardHeader color="info">
-                            <h4 className={classes.cardTitleWhite}>Stocks</h4>
-                        </CardHeader>
-                        <CardBody>
-                            <StockTable filter={stockSearch}/>
-                        </CardBody>
-                    </Card>
-                </GridItem>
+                <Card>
+                    <CardHeader color="info">
+                        <h4 className={classes.cardTitleWhite}>Stocks</h4>
+                    </CardHeader>
+                    <CardBody>
+                        <StockTable filter={stockSearch}/>
+                    </CardBody>
+                </Card>
             </GridItem>
         </GridContainer>
 

@@ -1,13 +1,26 @@
 import axiosInstance from "../utils/axiosInstance";
 import {axiosStockAPI} from "../config/axios";
 
+const postDiscussion = ({title,stockId}) => {
+    let req = '/Discussion'
+    return new Promise ((resolve, reject) =>{
 
-const CheckUsername = (username) => {
-    let req= '/User/check-username/';
+        axiosInstance()
+        .post(req, {
+            title,stockId
+        }).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+const CheckEmail = ({email}) => {
+    let req= '/User/check-email/';
     return new Promise ((resolve, reject) =>{
         axiosInstance().get(req,{
             params:{
-                "username":username
+                email
             }}).then((res)=> {
                 let result = res.data
                 resolve(result)
@@ -15,8 +28,24 @@ const CheckUsername = (username) => {
             reject(err)
         })
     })
+}
+
+const CheckUsername = ({username}) => {
+    let req= '/User/check-username/';
+    return new Promise ((resolve, reject) =>{
+        axiosInstance().get(req,{
+            params:{
+                username
+            }}).then((res)=> {
+            let result = res.data
+            resolve(result)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
 
 }
+
 
 const GetStocks = () => {
     let req = '/Stock';
@@ -61,5 +90,6 @@ export {
     CheckUsername,
     GetStocks,
     GetStockInfo,
-    GetStockSymbol
+    GetStockSymbol,
+    postDiscussion
 };

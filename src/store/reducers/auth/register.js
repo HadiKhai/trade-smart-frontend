@@ -1,7 +1,7 @@
 import {REGISTER_ERROR,REGISTER_LOADING,REGISTER_SUCCESS} from "../../types/auth";
 
 
-const auth = (state, { payload, type }) => {
+const register = (state, { payload, type }) => {
     switch (type) {
         case REGISTER_LOADING:
             return {
@@ -26,4 +26,4 @@ const auth = (state, { payload, type }) => {
     }
 };
 
-export default auth;
+export default register;
