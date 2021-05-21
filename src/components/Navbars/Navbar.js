@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useForm} from 'react-hook-form';
+import {get, useForm} from 'react-hook-form';
 import {Backdrop, createMuiTheme, Fade, InputAdornment, Modal, TextField, ThemeProvider} from "@material-ui/core";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
@@ -21,6 +21,7 @@ import {infoColor} from "../../assets/jss/material-dashboard-react";
 import Box from "@material-ui/core/Box";
 import {useAuth} from "../../store/hooks/auth/useAuth";
 import {CheckUsername, CheckEmail} from "../../api/queries";
+import {useStocks} from "../../store/hooks/stocks/useStocks";
 
 
 const useStyles = makeStyles(styles);
@@ -93,7 +94,7 @@ export default function Header(props) {
   const onSubmit = values => console.log(values);
 
   const {login,register,logout,id} = useAuth()
-
+  const {stocks} = useStocks()
   const {color} = props;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -208,6 +209,16 @@ export default function Header(props) {
     setOpenModal(false)
   }
 
+  const getImportantStocks = () => {
+    const allowed = ["apple","facebook","amazon"]
+    if(stocks.length!==0){
+      return stocks.filter((a)=> allowed.includes(a.name)
+      )
+    }
+    return []
+  }
+
+  console.log(getImportantStocks())
   return (
       <div style={{
         background: "#edebf8"
@@ -218,10 +229,17 @@ export default function Header(props) {
             {/* Here we create navbar brand, based on route name */}
             <div className={classes.flex}>
               <Box display="flex" p={1} flexDirection="row">
-                <Box p={1} flexGrow={1}>
-                  <ThemeProvider theme={theme}>
-                    <Typography variant="subtitle2">&nbsp;&nbsp;AAPL: 123</Typography>
-                  </ThemeProvider>
+                <Box display="flex" flexGrow={1} flexDirection="row">
+                  {
+                    getImportantStocks().length!==0 &&
+                    getImportantStocks().map((a)=> (
+                      <Box p={1} flexGrow={1}>
+                        <ThemeProvider theme={theme}>
+                          <Typography variant="subtitle2">{a.abbreviation}: {a.c}$</Typography>
+                        </ThemeProvider>
+                      </Box>
+                    ))
+                  }
                 </Box>
                 <Box>
                   {id !== ""?

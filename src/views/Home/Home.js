@@ -142,25 +142,6 @@ export default function Home() {
     const classes = useStyle();
 
     const {stocks} = useStocks()
-    const [stocksInfo,setStocksInfo] =useState(stocks)
-
-    const [stockChanges,setStockChanges] = useState({})
-    useEffect(()=> {
-
-        async function fetchMyAPI() {
-            let obj = []
-            for (const stock of stocks) {
-                const symbol = stock.abbreviation
-                const resp =await GetStockInfo({symbol})
-                resp.change = ((resp.c-resp.pc)*100/resp.pc).toPrecision(2)
-                const temp = {...stock,...resp}
-                obj.push(temp)
-            }
-            setStocksInfo(obj)
-        }
-        fetchMyAPI()
-
-    },[stocks])
 
 
     return (
@@ -182,8 +163,8 @@ export default function Home() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {stocksInfo.length !==0 &&
-                                    stocksInfo.sort((a, b) => parseFloat(b.change) - parseFloat(a.change)).slice(0, 2).map((stock) => (
+                                    {stocks.length !==0 &&
+                                    stocks.sort((a, b) => parseFloat(b.change) - parseFloat(a.change)).slice(0, 2).map((stock) => (
                                         <TableRow  className={classes.root}>
                                             <TableCell align="center">{stock.name} </TableCell>
                                             <TableCell align="center">{stock.c}</TableCell>
@@ -191,7 +172,7 @@ export default function Home() {
                                             <TableCell align="center">
                                                 <Link
                                                     to={"/app/trade/" + stock.id}>
-                                                    Trade
+                                                    <Button>Trade</Button>
                                                 </Link>
                                             </TableCell>
 

@@ -70,35 +70,17 @@ const useStyles = makeStyles(styles);
 export default function StockTable({filter}) {
     const classes = useStyles();
 
-    const [stocksInfo,setStocksInfo] = useState({})
     const [filteredStocks,setFilteredStock] = useState([])
     const {stocks} = useStocks()
 
     useEffect(()=> {
-
-            setFilteredStock(stocks)
-
-        async function fetchMyAPI() {
-            let obj = {}
-            for (const stock of stocks) {
-                const symbol = stock.abbreviation
-                const resp =await GetStockInfo({symbol})
-                obj[symbol]=resp
-            }
-            setStocksInfo(obj)
-        }
-        fetchMyAPI()
-
-    },[stocks])
-
-    useEffect(()=> {
         const temp = stocks.filter((e) => e.name.startsWith(filter))
         setFilteredStock(temp)
-    },[filter])
+    },[filter,stocks])
 
     const colorChange = (stock) => {
-        const currentPrice = stocksInfo[stock.abbreviation].c
-        const closingPrice = stocksInfo[stock.abbreviation].pc
+        const currentPrice = stock.c
+        const closingPrice =stock.pc
         if((currentPrice-closingPrice)<0){
             return "#FF605C"
         }
@@ -124,21 +106,22 @@ export default function StockTable({filter}) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(stocksInfo).length !==0 &&
+                    {stocks.length !==0 &&
                     filteredStocks.map((stock) => (
                         <TableRow  className={classes.root}>
                             <TableCell align="center">{stock.name} </TableCell>
                             <TableCell align="center">{stock.abbreviation} </TableCell>
-                            <TableCell align="center">{stocksInfo[stock.abbreviation].c}</TableCell>
-                            <TableCell align="center">{stocksInfo[stock.abbreviation].h}</TableCell>
-                            <TableCell align="center">{stocksInfo[stock.abbreviation].l}</TableCell>
-                            <TableCell align="center">{stocksInfo[stock.abbreviation].o}</TableCell>
-                            <TableCell align="center">{stocksInfo[stock.abbreviation].pc}</TableCell>
-                            <TableCell align="center" style={{color:colorChange(stock)}}>{((stocksInfo[stock.abbreviation].c-stocksInfo[stock.abbreviation].pc)*100/stocksInfo[stock.abbreviation].pc).toPrecision(2)}%</TableCell>
+                            <TableCell align="center">{stock.c}</TableCell>
+                            <TableCell align="center">{stock.h}</TableCell>
+                            <TableCell align="center">{stock.l}</TableCell>
+                            <TableCell align="center">{stock.o}</TableCell>
+                            <TableCell align="center">{stock.pc}</TableCell>
+                            <TableCell align="center" style={{color:colorChange(stock)}}>{((stock.c-stock.pc)*100/stock.pc).toPrecision(2)}%</TableCell>
                             <TableCell align="center">
                                 <Link
                                 to={"/app/trade/" + stock.id}>
-                                    Trade
+                                    <Button>
+                                    Trade</Button>
                                 </Link>
                             </TableCell>
 
