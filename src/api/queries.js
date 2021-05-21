@@ -15,8 +15,8 @@ const postDiscussion = ({title,stockId}) => {
         })
     })
 }
-const getDiscussion = (discussionId) => {
-    let req = `/Message/Discussion​${discussionId}/`
+const GetDiscussionMessages = (discussionId, pagenumber) => {
+    let req = `/Message/Discussion/${discussionId}/${pagenumber}`
     return new Promise ((resolve, reject) =>{
         axiosInstance().get(req).then((res)=> {
             let result = res.data
@@ -26,6 +26,19 @@ const getDiscussion = (discussionId) => {
         })
     })
 }
+
+const GetDiscussion = (discussionId) => {
+    let req = `/Discussion/${discussionId}`
+    return new Promise ((resolve, reject) =>{
+        axiosInstance().get(req).then((res)=> {
+            let result = res.data
+            resolve(result)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+
 
 const GetDiscussions = ({stockId, search}) => {
     let req = '/Discussion/All'
@@ -112,5 +125,6 @@ export {
     postDiscussion,
     CheckEmail,
     GetDiscussions,
-    getDiscussion
+    GetDiscussion,
+    GetDiscussionMessages,
 };

@@ -33,6 +33,7 @@ import Discussion from "views/Discussion/Discussion.js";
 import Home from "views/Home/Home";
 import New from "./views/New/New";
 import Trade from "./views/Trade/Trade";
+import DiscussionID from "./views/Discussion/DiscussionID";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -56,22 +57,29 @@ const dashboardRoutes = [
         name: "Trade",
         icon: ShowChartOutlinedIcon,
         component: Trade,
-        layout: "/admin"
+        layout: "/app"
     },
   {
-    path: "/prediction",
+    path: "/predictions",
     name: "Prediction",
     icon: DeveloperBoardOutlinedIcon,
     component: Chart,
     layout: "/app"
   },
   {
-    path: "/discussion",
-    name: "Discussion",
+    path: "/discussions",
+    name: "Discussions",
     icon: ForumOutlinedIcon,
     component: Discussion,
     layout: "/app"
   },
+    {
+        path: "/discussion/:discussionId?",
+        name: "DiscussionDetail",
+        icon: ShowChartOutlinedIcon,
+        component: DiscussionID,
+        layout: "/app"
+    },
   {
     path: "/portfolio",
     name: "Portfolio",
