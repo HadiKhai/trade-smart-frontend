@@ -1,14 +1,13 @@
 import axiosInstance from "../utils/axiosInstance";
 import {axiosStockAPI} from "../config/axios";
-import {useSelector} from "react-redux";
 
-const postDiscussion = ({title,stockId}) => {
+const postDiscussion = ({title,stockId, description}) => {
     let req = '/Discussion'
     return new Promise ((resolve, reject) =>{
 
         axiosInstance()
         .post(req, {
-            title,stockId
+            title,description,stockId
         }).then((res)=> {
             resolve(res.data)
         }).catch((err)=> {
@@ -16,8 +15,36 @@ const postDiscussion = ({title,stockId}) => {
         })
     })
 }
-const getDiscussion = (discussionId) => {
-    let req = `/Message/Discussion​${discussionId}/`
+const GetDiscussionMessages = (discussionId, pagenumber) => {
+    let req = `/Message/Discussion/${discussionId}/${pagenumber}`
+    return new Promise ((resolve, reject) =>{
+        axiosInstance().get(req).then((res)=> {
+            let result = res.data
+            resolve(result)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+const postMessage = ({content,discussionId}) => {
+    console.log("Content: "+content)
+    console.log("Discussion: "+discussionId)
+    let req = '/Message'
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .post(req, {
+                content,discussionId
+            }).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+
+const GetDiscussion = (discussionId) => {
+    let req = `/Discussion/${discussionId}`
     return new Promise ((resolve, reject) =>{
         axiosInstance().get(req).then((res)=> {
             let result = res.data
@@ -129,6 +156,8 @@ export {
     postDiscussion,
     CheckEmail,
     GetDiscussions,
-    getDiscussion,
-    GetUserDetails
+    GetDiscussion,
+    GetDiscussionMessages,
+    GetUserDetails,
+    postMessage
 };

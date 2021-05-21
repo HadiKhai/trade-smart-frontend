@@ -19,69 +19,11 @@ import {Backdrop, createMuiTheme, Fade, InputAdornment, Modal, TextField} from "
 import Grid from "@material-ui/core/Grid";
 import {GetDiscussions, GetStocks, postDiscussion} from "../../api/queries";
 import {useAuth} from "../../store/hooks/auth/useAuth";
+import {Link, useHistory} from "react-router-dom";
 
 export default function Discussion() {
     const [openModal, setOpenModal] = useState(false);
     const {id} = useAuth()
-
-    const myDiscussions = [
-        {
-            id:1,
-            title: "What happened in the market this week, everything is crashing",
-            creator: "Georgio Yammine",
-            stock: "All",
-            created_at: "2020-05-05",
-            nbOfComments: 20
-
-        },
-        {
-            id:2,
-            title: "helo",
-            creator: "Georgio Yammine",
-            stock: "GME",
-            created_at: "2020-05-05",
-            nbOfComments: 20
-
-        },
-        {
-            id:2,
-            title: "e",
-            creator: "Georgio Yammine",
-            stock: "GME",
-            created_at: "2020-05-05",
-            nbOfComments: 20
-
-        },
-        {
-            id:1,
-            title: "What happened in the market this week, everything is crashing",
-            creator: "Georgio Yammine",
-            stock: "All",
-            created_at: "2020-05-05",
-            nbOfComments: 20
-
-        },
-        {
-            id:2,
-            title: "helo",
-            creator: "Georgio Yammine",
-            stock: "GME",
-            created_at: "2020-05-05",
-            nbOfComments: 20
-
-        },
-        {
-            id:2,
-            title: "e",
-            creator: "Georgio Yammine",
-            stock: "GME",
-            created_at: "2020-05-05",
-            nbOfComments: 20
-
-        },
-    ]
-
-
 
     const useStyles = makeStyles((theme) => ({
         root: {
@@ -188,12 +130,14 @@ export default function Discussion() {
     const [resultsFilter, setResultsFilter] = useState({})
     const [resultsSearchFilter, setResultsSearchFilter] = useState("")
     const [subscribedOnly, setSubscribedOnly] = useState({})
-
+    const history = useHistory()
     const createDiscussion = () => {
         let title = discussionName
         let stockId = discussionStock.id
-        postDiscussion({title, stockId}).then((res)=> {
+        let description = discussionDescription
+        postDiscussion({title, stockId, description}).then((res)=> {
             setOpenModal(false)
+            history.push('/app/discussion/'+res.id)
         }).catch((err)=> {
         })
 
@@ -289,8 +233,13 @@ export default function Discussion() {
           </GridItem>
           {discussions.map((discussion) => (
           <GridItem xs={12} sm={12} md={12}>
+              <Link
+                  to={"/app/discussion/" + discussion.id}>
               <Card variant="outlined"
-                    onClick={() => console.log("clicked Card:"+discussion.id)}
+                    onClick={() => {
+                        console.log("clicked Card:"+discussion.id)
+
+                    }}
                     className={classes.discussionCard}>
                   <CardContent>
                       <GridContainer>
@@ -333,6 +282,7 @@ export default function Discussion() {
                       Share</Button>
                   </CardActions>
               </Card>
+              </Link>
           </GridItem>
           ))}
 
