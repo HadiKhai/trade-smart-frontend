@@ -3,12 +3,9 @@ import {axiosStockAPI} from "../config/axios";
 
 
 const CheckUsername = (username) => {
-    let req= '/User/check-username/';
+    let req= '/User/check-username/'+username;
     return new Promise ((resolve, reject) =>{
-        axiosInstance().get(req,{
-            params:{
-                "username":username
-            }}).then((res)=> {
+        axiosInstance().get(req).then((res)=> {
                 let result = res.data
                 resolve(result)
         }).catch((err)=> {

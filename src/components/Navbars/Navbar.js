@@ -20,6 +20,7 @@ import Button from "@material-ui/core/Button";
 import {infoColor} from "../../assets/jss/material-dashboard-react";
 import Box from "@material-ui/core/Box";
 import {useAuth} from "../../store/hooks/auth/useAuth";
+import {CheckUsername} from "../../api/queries";
 
 
 const useStyles = makeStyles(styles);
@@ -107,14 +108,15 @@ export default function Header(props) {
   const [passwordError,setPasswordError] = useState("");
 
   const [usernameRegister, setUsernameRegister] = useState("");
-  const [usernameErrorRegister,setUsernameErrorRegistrer] = useState("")
+  const [usernameErrorRegister,setUsernameErrorRegister] = useState("")
   const [firstnameRegister, setFirstnameRegister] = useState("");
   const [firstnameErrorRegister,setFirstnameErrorRegistrer] = useState("")
   const [lastnameRegister, setLastnameRegister] = useState("");
   const [lastnameErrorRegister,setLastnameErrorRegistrer] = useState("")
   const [emailRegister, setEmailRegister] = useState("");
-  const [errorRegister, setErrorRegister] = useState("");
+  const [emailErrorRegister, setEmailErrorRegister] = useState("");
   const [passwordRegister, setPasswordRegister] = useState("");
+  const [passwordErrorRegister, setPasswordErrorRegister] = useState("");
 
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -126,14 +128,63 @@ export default function Header(props) {
 
   const checkEmail = (email) => {
     let regemail = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/
-    if (!regemail.test(email) && !email === "") {
-      setErrorRegister("Incorrect Email")
+    if (!regemail.test(email) && email !== "") {
+      setEmailErrorRegister("Incorrect Email")
 
     } else {
-      setErrorRegister("")
+      setEmailErrorRegister("")
 
     }
     setEmailRegister(email)
+  }
+  const checkPasswordRegister = (password) => {
+    let message = "";
+    if(password.length < 10)
+      message += "be at least 10 characters";
+    let lower = /.*[a-z].*/
+    let include = "";
+    if(!lower.test(password)){
+        include += "lowercase"
+    }
+    let upper = /.*[A-Z].*/
+    if(!upper.test(password)){
+      if (include !== "") {
+        include += ", "
+      }
+      include += "uppercase"
+    }
+    let numbers = /.*[0-9].*/
+    if(!numbers.test(password)){
+      if (include !== "") {
+        include += ", "
+      }
+      include += "numbers"
+    }
+    let special = /.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~].*/
+    if(!special.test(password)){
+      if (include !== "") {
+        include += ", "
+      }
+      include += "special characters"
+    }
+
+    if (include !== "") {
+      include = "include " + include;
+    }
+    if(message !== ""){
+      message = message + " and "+ include;
+    }
+    else{
+      message = include;
+    }
+    if (message !== "") {
+      setPasswordErrorRegister("Password should "+ message)
+
+    } else {
+      setPasswordErrorRegister("")
+
+    }
+    setPasswordRegister(password)
   }
 
   const loginSubmit = () => {
@@ -147,7 +198,7 @@ export default function Header(props) {
       userName:usernameRegister,
       lastName:lastnameRegister,
       firstName:firstnameRegister,}).then(()=> {
-        login({username:usernameRegister,password:passwordRegister})
+          login({username:usernameRegister,password:passwordRegister})
         }
     ).catch((err)=>{
       console.log(err)
@@ -179,13 +230,13 @@ export default function Header(props) {
                       >
                         Logout
                       </Button>:
-                    <Button
-                    variant="outlined"
-                    className={classesCustom.wallet}
-                    onClick={() => setOpenModal(!openModal)}
-                    >
-                    Login
-                    </Button>
+                      <Button
+                          variant="outlined"
+                          className={classesCustom.wallet}
+                          onClick={() => setOpenModal(!openModal)}
+                      >
+                        Login
+                      </Button>
                   }
                 </Box>
               </Box>
@@ -234,6 +285,7 @@ export default function Header(props) {
                         label="Username"
                         variant="outlined"
                         value={username}
+                        onBlur={console.log("B")}
                         error={usernameError!==""}
                         helperText={usernameError}
                     />
@@ -296,6 +348,11 @@ export default function Header(props) {
                           label="Firstname"
                           variant="outlined"
                           value={firstnameRegister}
+                          required
+                          onBlur={()=>{
+                            setFirstnameErrorRegistrer(firstnameRegister===""?"First Name is required!":"")}}
+                          error={firstnameErrorRegister!==""}
+                          helperText={firstnameErrorRegister}
                       />
                     </Grid>
                     <Grid xs={12} md={12} lg={12}>
@@ -306,6 +363,11 @@ export default function Header(props) {
                           label="Lastname"
                           variant="outlined"
                           value={lastnameRegister}
+                          required
+                          onBlur={()=>{
+                            setLastnameErrorRegistrer(lastnameRegister===""?"Last Name is required!":"")}}
+                          error={lastnameErrorRegister!==""}
+                          helperText={lastnameErrorRegister}
                       />
                     </Grid>
                     <Grid xs={12} md={12} lg={12}>
@@ -316,18 +378,46 @@ export default function Header(props) {
                           label="Username"
                           variant="outlined"
                           value={usernameRegister}
+                          required
+                          onBlur={() => {
+                            setUsernameErrorRegister(usernameRegister.length>0?"":"Username is required!")
+                            if(usernameRegister!==""){
+                              CheckUsername(usernameRegister).then((res)=>{
+                                if(res.exists)
+                                  setUsernameErrorRegister("Username already exists!")
+                                else
+                                  setUsernameErrorRegister("")
+                              })
+                            }
+                          }}
+                          error={usernameErrorRegister!==""}
+                          helperText={usernameErrorRegister}
                       />
                     </Grid>
                     <Grid xs={12} md={12} lg={12}>
                       <TextField
                           className={classesCustom.textf}
-                          error={errorRegister !== ""}
                           id="emailReg"
                           onChange={(newValue) => checkEmail(newValue.target.value)}
                           label="Email"
-                          helperText={errorRegister}
                           variant="outlined"
                           value={emailRegister}
+                          required
+                          onBlur={() => {
+                            if(emailRegister==="")
+                              setEmailErrorRegister("Email is required!")
+                            if(emailRegister!=="" && emailErrorRegister===""){
+                              CheckUsername(emailRegister).then((res)=>{
+                                console.log(res.exists())
+                                if(res.exists)
+                                  setEmailErrorRegister("Email already exists!")
+                                else
+                                  setEmailErrorRegister("")
+                              })
+                            }
+                          }}
+                          error={emailErrorRegister!==""}
+                          helperText={emailErrorRegister}
                       />
                     </Grid>
                     <Grid xs={12} md={12} lg={12}>
@@ -337,8 +427,12 @@ export default function Header(props) {
                           label='Password'
                           variant="outlined"
                           type={showPassword ? "text" : "password"}
-                          onChange={(newValue) => setPasswordRegister(newValue.target.value)}
+                          onChange={(newValue) => checkPasswordRegister(newValue.target.value)}
+                          error={passwordErrorRegister!==""}
+                          helperText={passwordErrorRegister}
                           value={passwordRegister}
+                          onBlur={(newValue) => checkPasswordRegister(newValue.target.value)}
+                          required
                           InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
