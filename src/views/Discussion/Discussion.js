@@ -184,6 +184,7 @@ export default function Discussion() {
     const [discussionDescription, setDiscussionDescription] = useState("")
 
     const [resultsFilter, setResultsFilter] = useState({})
+    const [resultsSearchFilter, setResultsSearchFilter] = useState("")
     const [subscribedOnly, setSubscribedOnly] = useState({})
 
     const createDiscussion = () => {
@@ -214,17 +215,42 @@ export default function Discussion() {
         })
     },[])
 
+    const refreshData = (stock, search, onlySubscribed) => {
+        let stockId = stock.id==undefined?"":stock.id
+        if(onlySubscribed) {
+            GetDiscussions({stockId, search}).then((res) => {
+                setDiscussions(res)
+                console.log(res)
+            })
+        }
+        else{
+            GetDiscussions({stockId, search}).then((res) => {
+                setDiscussions(res)
+                console.log(res)
+            })
+        }
+    }
+
 
     return (
       <GridContainer style={{paddingRight: '20px'}}>
           <GridItem xs={5} sm={5} md={5}>
-              <SearchBar style={{minHeight: '56px'}}></SearchBar>
+              <SearchBar style={{minHeight: '56px'}}
+                value={resultsSearchFilter}
+                onChange={(newValue) => setResultsSearchFilter(newValue)}
+                onRequestSearch={(text) => {
+                    refreshData(resultsFilter, text, subscribedOnly)
+                }}
+              />
           </GridItem>
           <GridItem xs={2} sm={2} md={2}>
               <FormControl variant="outlined" fullWidth={true} >
                   <InputLabel>Filter</InputLabel>
                   <Select style={{backgroundColor: 'white'}}
-                          onChange={(newValue) => setResultsFilter(newValue.target.value)}
+                          onChange={(newValue) => {
+                              setResultsFilter(newValue.target.value)
+                              refreshData(newValue.target.value, resultsSearchFilter, subscribedOnly)
+                          }}
                           value={resultsFilter}
                           label="Filter"
                   >
@@ -235,18 +261,22 @@ export default function Discussion() {
                       {/*    // <MenuItem value={category}>{category}</MenuItem>*/}
                       {/*// ))}*/}
                       {stocks.map((stock) => (
-                          <MenuItem value={stock.abbreviation}>{stock.abbreviation}</MenuItem>
+                          <MenuItem value={stock}>{stock.abbreviation}</MenuItem>
                       ))}
                   </Select>
               </FormControl>
           </GridItem>
           <GridItem xs={2} sm={2} md={2}>
               <FormControlLabel
-                  label="View Subscribed"
+                  label="View Only Subscribed"
                   control={
                       <Switch
                           checked={subscribedOnly.checked}
-                          onChange={(newValue) => setSubscribedOnly(newValue.target.value)}
+                          onChange={(newValue) => {
+                              setSubscribedOnly(newValue.target.value)
+                              refreshData(resultsFilter, resultsSearchFilter, true)
+                          }
+                          }
                           name="subscribedOnly"
                           color="primary"
                       />
@@ -259,9 +289,11 @@ export default function Discussion() {
                   onClick={() => setOpenModal(!openModal)}>
               Create New Discussion</Button>
           </GridItem>
-          {myDiscussions.map((discussion) => (
+          {discussions.map((discussion) => (
           <GridItem xs={12} sm={12} md={12}>
-              <Card variant="outlined" onClick={() => console.log("clicked Card")} className={classes.discussionCard}>
+              <Card variant="outlined"
+                    onClick={() => console.log("clicked Card:"+discussion.id)}
+                    className={classes.discussionCard}>
                   <CardContent>
                       <GridContainer>
                         <GridItem>
@@ -270,7 +302,7 @@ export default function Discussion() {
                                             e.stopPropagation()
                                             console.log("clicked Stock")
                                         }}>
-                                {discussion.stock}
+                                {discussion.stockAbrv}
                             </Typography>
                         </GridItem>
                         <GridItem>
@@ -278,14 +310,14 @@ export default function Discussion() {
                                 <span>Posted by </span>
                                 <span onClick={(e) => {
                                     e.stopPropagation()
-                                    console.log("clicked Author")
+                                    console.log("clicked Author" + discussion.creatorUsername)
                                 }}
-                                      className={classes.clickable}>{discussion.creator}</span>
+                                      className={classes.clickable}>{discussion.creatorUsername}</span>
                             </Typography>
                         </GridItem>
                         <GridItem>
                             <Typography color="textSecondary" gutterBottom>
-                                {discussion.created_at}
+                                {discussion.createdAt}
                             </Typography>
                         </GridItem>
                       </GridContainer>
@@ -295,8 +327,12 @@ export default function Discussion() {
                       </Typography>
                   </CardContent>
                   <CardActions>
-                      <Button size="large">{discussion.nbOfComments} Comments</Button>
-                      <Button size="large">Share</Button>
+                      <Button size="large">{discussion.messageCount} Comments</Button>
+                      <Button size="large" onClick={(e) => {
+                          e.stopPropagation()
+                          console.log("Share Discussion:"+discussion.id)
+                      }}>
+                      Share</Button>
                   </CardActions>
               </Card>
           </GridItem>
