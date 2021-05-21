@@ -19,7 +19,7 @@ import {Backdrop, createMuiTheme, Fade, InputAdornment, Modal, TextField} from "
 import Grid from "@material-ui/core/Grid";
 import {GetDiscussions, GetStocks, postDiscussion} from "../../api/queries";
 import {useAuth} from "../../store/hooks/auth/useAuth";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 
 export default function Discussion() {
     const [openModal, setOpenModal] = useState(false);
@@ -130,14 +130,14 @@ export default function Discussion() {
     const [resultsFilter, setResultsFilter] = useState({})
     const [resultsSearchFilter, setResultsSearchFilter] = useState("")
     const [subscribedOnly, setSubscribedOnly] = useState({})
-
+    const history = useHistory()
     const createDiscussion = () => {
         let title = discussionName
         let stockId = discussionStock.id
         let description = discussionDescription
         postDiscussion({title, stockId, description}).then((res)=> {
             setOpenModal(false)
-            // '/app/discussion/'+res.id) //TODO route
+            history.push('/app/discussion/'+res.id)
         }).catch((err)=> {
         })
 
