@@ -188,8 +188,10 @@ export default function Header(props) {
   }
 
   const loginSubmit = () => {
-    login({username,password})
-    setOpenModal(false)
+    login({username,password}).then((res)=> {
+      setOpenModal(false)
+    }).catch((err)=> {
+    })
   }
 
   const registerSubmit = () => {
@@ -285,7 +287,7 @@ export default function Header(props) {
                         label="Username"
                         variant="outlined"
                         value={username}
-                        onBlur={console.log("B")}
+                        // onBlur={console.log("B")}
                         error={usernameError!==""}
                         helperText={usernameError}
                     />

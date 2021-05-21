@@ -15,6 +15,31 @@ const postDiscussion = ({title,stockId}) => {
         })
     })
 }
+const getDiscussion = (discussionId) => {
+    let req = `/Message/Discussion​${discussionId}/`
+    return new Promise ((resolve, reject) =>{
+        axiosInstance().get(req).then((res)=> {
+            let result = res.data
+            resolve(result)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+
+const GetDiscussions = ({stockId, search}) => {
+    let req = '/Discussion/All'
+    return new Promise ((resolve, reject) =>{
+        axiosInstance()
+            .post(req, {
+                stockId,search
+            }).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
 const CheckEmail = (email) => {
     let req= '/User/check-email/'+email;
     return new Promise ((resolve, reject) =>{
@@ -85,5 +110,7 @@ export {
     GetStockInfo,
     GetStockSymbol,
     postDiscussion,
-    CheckEmail
+    CheckEmail,
+    GetDiscussions,
+    getDiscussion
 };

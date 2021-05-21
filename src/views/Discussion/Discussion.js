@@ -17,12 +17,12 @@ import Button from "@material-ui/core/Button";
 import {infoColor} from "../../assets/jss/material-dashboard-react";
 import {Backdrop, createMuiTheme, Fade, InputAdornment, Modal, TextField} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import {GetStocks} from "../../api/queries";
+import {GetDiscussions, GetStocks, postDiscussion} from "../../api/queries";
 
 export default function Discussion() {
     const [openModal, setOpenModal] = useState(false);
 
-    const discussions = [
+    const myDiscussions = [
         {
             id:1,
             title: "What happened in the market this week, everything is crashing",
@@ -177,6 +177,7 @@ export default function Discussion() {
     const classesCustom = useCustomStyle();
 
     const [stocks, setStocks] = useState([])
+    const [discussions, setDiscussions] = useState([])
     const [discussionName, setDiscussionName] = useState("")
     const [discussionNameError, setDiscussionNameError] = useState("")
     const [discussionStock,setDiscussionStock] = useState({})
@@ -186,6 +187,13 @@ export default function Discussion() {
     const [subscribedOnly, setSubscribedOnly] = useState({})
 
     const createDiscussion = () => {
+        let title = discussionName
+        let stockId = discussionStock.id
+        postDiscussion({title, stockId}).then((res)=> {
+            setOpenModal(false)
+        }).catch((err)=> {
+        })
+
         console.log(discussionName);
         console.log(discussionStock.id);
         console.log(discussionDescription);
@@ -194,6 +202,15 @@ export default function Discussion() {
     useEffect(()=> {
         GetStocks().then((res)=>{
             setStocks(res)
+        })
+    },[])
+
+    useEffect(()=> {
+        let stockId = ""
+        let search = ""
+        GetDiscussions({stockId, search}).then((res)=>{
+            setDiscussions(res)
+            console.log(res)
         })
     },[])
 
@@ -214,7 +231,7 @@ export default function Discussion() {
                       <MenuItem value="">
                           <em>None</em>
                       </MenuItem>
-                      {/*{[...new Set(discussions.map((discussion) => (discussion.stock)))].map((category) => (*/}
+                      {/*{[...new Set(myDiscussions.map((discussion) => (discussion.stock)))].map((category) => (*/}
                       {/*    // <MenuItem value={category}>{category}</MenuItem>*/}
                       {/*// ))}*/}
                       {stocks.map((stock) => (
@@ -242,20 +259,28 @@ export default function Discussion() {
                   onClick={() => setOpenModal(!openModal)}>
               Create New Discussion</Button>
           </GridItem>
-          {discussions.map((discussion) => (
+          {myDiscussions.map((discussion) => (
           <GridItem xs={12} sm={12} md={12}>
-              <Card variant="outlined" className={classes.discussionCard}>
+              <Card variant="outlined" onClick={() => console.log("clicked Card")} className={classes.discussionCard}>
                   <CardContent>
                       <GridContainer>
                         <GridItem>
-                            <Typography className={classes.clickable} color="textSecondary" gutterBottom>
+                            <Typography className={classes.clickable} color="textSecondary" gutterBottom
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            console.log("clicked Stock")
+                                        }}>
                                 {discussion.stock}
                             </Typography>
                         </GridItem>
                         <GridItem>
                             <Typography color="textSecondary" gutterBottom>
                                 <span>Posted by </span>
-                                <span className={classes.clickable}>{discussion.creator}</span>
+                                <span onClick={(e) => {
+                                    e.stopPropagation()
+                                    console.log("clicked Author")
+                                }}
+                                      className={classes.clickable}>{discussion.creator}</span>
                             </Typography>
                         </GridItem>
                         <GridItem>
