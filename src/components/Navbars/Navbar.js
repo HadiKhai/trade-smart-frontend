@@ -20,7 +20,7 @@ import Button from "@material-ui/core/Button";
 import {infoColor} from "../../assets/jss/material-dashboard-react";
 import Box from "@material-ui/core/Box";
 import {useAuth} from "../../store/hooks/auth/useAuth";
-import {CheckUsername} from "../../api/queries";
+import {CheckUsername, CheckEmail} from "../../api/queries";
 
 
 const useStyles = makeStyles(styles);
@@ -407,8 +407,7 @@ export default function Header(props) {
                             if(emailRegister==="")
                               setEmailErrorRegister("Email is required!")
                             if(emailRegister!=="" && emailErrorRegister===""){
-                              CheckUsername(emailRegister).then((res)=>{
-                                console.log(res.exists())
+                              CheckEmail(emailRegister).then((res)=>{
                                 if(res.exists)
                                   setEmailErrorRegister("Email already exists!")
                                 else

@@ -15,13 +15,10 @@ const postDiscussion = ({title,stockId}) => {
         })
     })
 }
-const CheckEmail = ({email}) => {
-    let req= '/User/check-email/';
+const CheckEmail = (email) => {
+    let req= '/User/check-email/'+email;
     return new Promise ((resolve, reject) =>{
-        axiosInstance().get(req,{
-            params:{
-                email
-            }}).then((res)=> {
+        axiosInstance().get(req).then((res)=> {
                 let result = res.data
                 resolve(result)
         }).catch((err)=> {
@@ -30,8 +27,8 @@ const CheckEmail = ({email}) => {
     })
 }
 
-const CheckUsername = ({username}) => {
-    let req= '/User/check-username/';
+const CheckUsername = (username) => {
+    let req= '/User/check-username/'+username;
     return new Promise ((resolve, reject) =>{
         axiosInstance().get(req).then((res)=> {
                 let result = res.data
@@ -87,5 +84,6 @@ export {
     GetStocks,
     GetStockInfo,
     GetStockSymbol,
-    postDiscussion
+    postDiscussion,
+    CheckEmail
 };
