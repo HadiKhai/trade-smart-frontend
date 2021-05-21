@@ -26,6 +26,22 @@ const GetDiscussionMessages = (discussionId, pagenumber) => {
         })
     })
 }
+const postMessage = ({content,discussionId}) => {
+    console.log("Content: "+content)
+    console.log("Discussion: "+discussionId)
+    let req = '/Message'
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .post(req, {
+                content,discussionId
+            }).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
 
 const GetDiscussion = (discussionId) => {
     let req = `/Discussion/${discussionId}`
@@ -142,5 +158,6 @@ export {
     GetDiscussions,
     GetDiscussion,
     GetDiscussionMessages,
-    GetUserDetails
+    GetUserDetails,
+    postMessage
 };

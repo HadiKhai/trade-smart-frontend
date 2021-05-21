@@ -19,6 +19,7 @@ import {Backdrop, createMuiTheme, Fade, InputAdornment, Modal, TextField} from "
 import Grid from "@material-ui/core/Grid";
 import {GetDiscussions, GetStocks, postDiscussion} from "../../api/queries";
 import {useAuth} from "../../store/hooks/auth/useAuth";
+import {Link} from "react-router-dom";
 
 export default function Discussion() {
     const [openModal, setOpenModal] = useState(false);
@@ -230,6 +231,8 @@ export default function Discussion() {
           </GridItem>
           {discussions.map((discussion) => (
           <GridItem xs={12} sm={12} md={12}>
+              <Link
+                  to={"/app/discussion/" + discussion.id}>
               <Card variant="outlined"
                     onClick={() => {
                         console.log("clicked Card:"+discussion.id)
@@ -277,6 +280,7 @@ export default function Discussion() {
                       Share</Button>
                   </CardActions>
               </Card>
+              </Link>
           </GridItem>
           ))}
 

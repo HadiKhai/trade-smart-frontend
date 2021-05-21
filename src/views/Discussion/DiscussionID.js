@@ -17,9 +17,17 @@ import Button from "@material-ui/core/Button";
 import {infoColor} from "../../assets/jss/material-dashboard-react";
 import {Backdrop, createMuiTheme, Fade, InputAdornment, Modal, TextField} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import {GetDiscussion, GetDiscussionMessages, GetDiscussions, GetStocks, postDiscussion} from "../../api/queries";
+import {
+    GetDiscussion,
+    GetDiscussionMessages,
+    GetDiscussions,
+    GetStocks,
+    postDiscussion,
+    postMessage
+} from "../../api/queries";
 import {useAuth} from "../../store/hooks/auth/useAuth";
 import {useParams} from "react-router";
+import {useUser} from "../../store/hooks/user/useUser";
 
 export default function Discussion() {
 
@@ -39,25 +47,11 @@ export default function Discussion() {
             fontWeight: '500',
 
         },
-        discussionCard: {
+        commentCard: {
             marginTop: '15px',
             marginBottom: '5px',
-            // border: '2px solid transparent',
-            '&:hover': {
-                cursor: 'pointer',
-                transform: 'scale(1.005)',
-                // borderColor: infoColor[0]
-            },
         },
-        createNew: {
-            backgroundColor: infoColor[0],
-            color: 'white',
-            float: 'right',
-            minHeight: '56px',
-            '&:hover': {
-                backgroundColor: infoColor[0],
-            }
-        }
+
     }));
     const classes = useStyles();
 
@@ -117,6 +111,7 @@ export default function Discussion() {
 
     }));
     const classesCustom = useCustomStyle();
+    const {userName} = useUser()
 
     const [openModal, setOpenModal] = useState(false);
     const {id} = useAuth()
@@ -124,31 +119,20 @@ export default function Discussion() {
 
     const [discussionInfo, setDiscussionInfo] = useState([])
     const [messages, setMessages] = useState([])
-    const [discussionName, setDiscussionName] = useState("")
-    const [discussionNameError, setDiscussionNameError] = useState("")
-    const [discussionStock,setDiscussionStock] = useState({})
-    const [discussionDescription, setDiscussionDescription] = useState("")
+    const [comment, setComment] = useState("")
 
-    const [resultsFilter, setResultsFilter] = useState({})
-    const [resultsSearchFilter, setResultsSearchFilter] = useState("")
-    const [subscribedOnly, setSubscribedOnly] = useState({})
-
-    const createDiscussion = () => {
-        let title = discussionName
-        let stockId = discussionStock.id
-        postDiscussion({title, stockId}).then((res)=> {
-            setOpenModal(false)
-        }).catch((err)=> {
+    let fetchMessages = false;
+    const sendComment = (content) => {
+        postMessage({content,discussionId}).then(()=>{
+            GetDiscussionMessages(discussionId,0).then((messages)=>{
+                setMessages(messages)
+            })
         })
-
-        console.log(discussionName);
-        console.log(discussionStock.id);
-        console.log(discussionDescription);
+        fetchMessages = !fetchMessages
     }
 
     useEffect(()=> {
         GetDiscussion(discussionId).then((messages)=>{
-            console.log("HEY")
             setDiscussionInfo(messages)
             console.log(messages)
         })
@@ -186,23 +170,9 @@ export default function Discussion() {
                     className={classes.discussionCard}>
                   <CardContent>
                       <GridContainer>
-                          {/*<GridItem>*/}
-                          {/*    <Typography className={classes.clickable} color="textSecondary" gutterBottom*/}
-                          {/*                onClick={(e) => {*/}
-                          {/*                    e.stopPropagation()*/}
-                          {/*                    console.log("clicked Stock")*/}
-                          {/*                }}>*/}
-                          {/*        {discussionInfo.stockAbrv}*/}
-                          {/*    </Typography>*/}
-                          {/*</GridItem>*/}
                           <GridItem>
                               <Typography color="textSecondary" gutterBottom>
                                   <span>Posted by </span>
-                                  <span onClick={(e) => {
-                                      e.stopPropagation()
-                                      console.log("clicked Author" + discussionInfo.creatorUsername)
-                                  }}
-                                        className={classes.clickable}>{discussionInfo.creatorUsername}</span>
                               </Typography>
                           </GridItem>
                           <GridItem>
@@ -228,7 +198,7 @@ export default function Discussion() {
           </GridItem>
           {messages.map((message) => (
           <GridItem xs={12} sm={12} md={12}>
-              <Card variant="outlined">
+              <Card variant="outlined" className={classes.commentCard}>
                   <CardContent>
                       <GridContainer>
                         <GridItem>
@@ -237,7 +207,7 @@ export default function Discussion() {
                                     e.stopPropagation()
                                     console.log("clicked Author" + message.senderId)
                                 }}
-                                      className={classes.clickable}>{message.senderId}</span>
+                                      className={classes.clickable}>{message.senderUsername}</span>
                             </Typography>
                         </GridItem>
                         <GridItem>
@@ -261,44 +231,27 @@ export default function Discussion() {
                     className={classes.discussionCard}>
                   <CardContent>
                       <GridContainer>
-                          {/*<GridItem>*/}
-                          {/*    <Typography className={classes.clickable} color="textSecondary" gutterBottom*/}
-                          {/*                onClick={(e) => {*/}
-                          {/*                    e.stopPropagation()*/}
-                          {/*                    console.log("clicked Stock")*/}
-                          {/*                }}>*/}
-                          {/*        {discussionInfo.stockAbrv}*/}
-                          {/*    </Typography>*/}
-                          {/*</GridItem>*/}
                           <GridItem>
-                              <Typography color="textSecondary" gutterBottom>
-                                  <span>Posted by </span>
-                                  <span onClick={(e) => {
-                                      e.stopPropagation()
-                                      console.log("clicked Author" + discussionInfo.creatorUsername)
-                                  }}
-                                        className={classes.clickable}>{discussionInfo.creatorUsername}</span>
-                              </Typography>
-                          </GridItem>
-                          <GridItem>
-                              <Typography color="textSecondary" gutterBottom>
-                                  {discussionInfo.createdAt}
+                              <Typography color="textSecondary" gutterBottom style={{paddingRight:'3px'}}>
+                                  Comment as {userName}
                               </Typography>
                           </GridItem>
                       </GridContainer>
-                      <Typography className={classes.title}>
-                          {discussionInfo.title}
-                          <br />
+                      <Typography>
+                          <TextField
+                              className={classesCustom.textf}
+                              id="description"
+                              label="Description"
+                              multiline
+                              rows={6}
+                              variant="outlined"
+                              onChange={(newValue) => setComment(newValue.target.value)}
+                              value={comment}
+                          />
                       </Typography>
+                      <Button size="large" onClick={()=>{sendComment(comment)}} >Comment</Button>
                   </CardContent>
-                  <CardActions>
-                      <Button size="large">{messages.length} Comments</Button>
-                      <Button size="large" onClick={(e) => {
-                          e.stopPropagation()
-                          console.log("Share Discussion:"+discussionInfo.id)
-                      }}>
-                          Share</Button>
-                  </CardActions>
+
               </Card>
           </GridItem>
       </GridContainer>
