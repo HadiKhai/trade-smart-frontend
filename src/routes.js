@@ -25,12 +25,14 @@ import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import AccessibilityOutlinedIcon from '@material-ui/icons/AccessibilityOutlined';
 import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 import ShowChartOutlinedIcon from '@material-ui/icons/ShowChartOutlined';
+import ListIcon from '@material-ui/icons/List';
 // core components/views for Admin layout
 import SignalPage from "views/Stocks/Stocks.js";
 import Chart from "views/Chart/Chart.js";
 import Discussion from "views/Discussion/Discussion.js";
 import Home from "views/Home/Home";
 import New from "./views/New/New";
+import Trade from "./views/Trade/Trade";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -45,9 +47,16 @@ const dashboardRoutes = [
     {
         path: "/stocks",
         name: "Stocks",
-        icon: ShowChartOutlinedIcon,
+        icon: ListIcon,
         component: SignalPage,
         layout: "/app"
+    },
+    {
+        path: "/trade/:stockId?",
+        name: "Trade",
+        icon: ShowChartOutlinedIcon,
+        component: Trade,
+        layout: "/admin"
     },
   {
     path: "/prediction",

@@ -1,7 +1,7 @@
 import {LOGIN_ERROR, LOGIN_LOADING, LOGIN_SUCCESS} from "../../types/auth";
 
 
-const auth = (state, { payload, type }) => {
+const login = (state, { payload, type }) => {
     switch (type) {
         case LOGIN_LOADING:
             return {
@@ -30,4 +30,4 @@ const auth = (state, { payload, type }) => {
     }
 };
 
-export default auth;
+export default login;

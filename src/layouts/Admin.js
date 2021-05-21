@@ -14,6 +14,8 @@ import routes from "routes.js";
 
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 import {useAuth} from "../store/hooks/auth/useAuth";
+import {stocks} from "../store/actions/stock/stocks";
+import {useStocks} from "../store/hooks/stocks/useStocks";
 
 
 
@@ -48,9 +50,8 @@ export default function Admin({ ...rest }) {
   // states and functions
   const [color, setColor] = React.useState("blue");
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
   const  {reloadToken} = useAuth()
-
+  const {getStocks} = useStocks()
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -62,6 +63,8 @@ export default function Admin({ ...rest }) {
 
   useEffect(()=> {
     reloadToken()
+    getStocks()
+
   },[])
   // initialize and destroy the PerfectScrollbar plugin
   React.useEffect(() => {
