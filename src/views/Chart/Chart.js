@@ -9,8 +9,16 @@ import GridItem from "../../components/Grid/GridItem";
 import GridContainer from "../../components/Grid/GridContainer";
 import Button from "@material-ui/core/Button";
 import {infoColor} from "../../assets/jss/material-dashboard-react";
-import {CheckEmail, CheckUsername, DeleteDevKey, GenerateDevKey, GetStocks, SendPrediction} from "../../api/queries";
-import {Backdrop, Fade, InputAdornment, Modal, TextField} from "@material-ui/core";
+import {
+  CheckEmail,
+  CheckUsername,
+  DeleteDevKey,
+  GenerateDevKey,
+  GetPrediction,
+  GetStocks,
+  SendPrediction
+} from "../../api/queries";
+import {Backdrop, Fade, InputAdornment, Modal, TableContainer, TextField} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import Visibility from "@material-ui/icons/Visibility";
@@ -25,6 +33,15 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import Card from "../../components/Card/Card";
+import CardHeader from "../../components/Card/CardHeader";
+import CardBody from "../../components/Card/CardBody";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import TableBody from "@material-ui/core/TableBody";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -94,13 +111,17 @@ export default function Signals() {
   const [date, setDate] = useState(tomorrow)
   const [closingPrice, setClosingPrice] = useState(0)
   const [stock, setStock] = useState({})
+  const [predictionStock, setPredictionStock] = useState({})
   const [openModal, setOpenModal] = useState(false);
   const [statusDev, setStatusDev] = useState(false)
   const [devKey, setDevKey] = useState("")
+  const [results, setResults] = useState([])
 
   useEffect(()=> {
     GetStocks().then((res)=>{
       setStocks(res)
+      getPredictions(res[0].id)
+      setPredictionStock(res[0])
     })
   },[])
 
@@ -134,8 +155,36 @@ export default function Signals() {
 
   }
 
+  const getPredictions = (stockid) => {
+    GetPrediction(stockid).then((res) => {
+      setResults(res)
+    })
+
+  }
+
   return (
       <GridContainer>
+        <GridItem xs={7} sm={7} md={7} >
+          <FormControl variant="outlined"  className={classes.textf}>
+            <InputLabel>Stock</InputLabel>
+            <Select style={{backgroundColor: 'white'}}
+                    label="Stock"
+                    onChange={(newValue) => {
+                      setPredictionStock(newValue.target.value)
+                      getPredictions(newValue.target.value.id)
+                    }
+                    }
+                    value={predictionStock.abbreviation }
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {stocks.map((stock) => (
+                  <MenuItem value={stock}>{stock.abbreviation}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </GridItem>
         <GridItem xs={2} sm={2} md={2} >
           <Button
               variant="outlined"
@@ -155,7 +204,39 @@ export default function Signals() {
             I am a developer
           </Button>
         </GridItem>
+        <GridItem xs={12} sm={12} md={12}>
+          <Card>
+            <CardHeader color="info">
+              <h4 className={classes.cardTitleWhite}>Predictions for {predictionStock.name}</h4>
+            </CardHeader>
+            <CardBody>
 
+              <TableContainer>
+                <Table  stickyHeader style={{backgroundColor: "#f0f0f0"}}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">Stock Name</TableCell>
+                      <TableCell align="center">Stock Symbol</TableCell>
+                      <TableCell align="center">Closing Price</TableCell>
+                      <TableCell align="center">Date</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {results.length !==0 && stocks.length !==0 &&
+                    results.map((stock) => (
+                        <TableRow  className={classes.root}>
+                          <TableCell align="center">{stock.stockName} </TableCell>
+                          <TableCell align="center">{stock.stockAbbreviation } </TableCell>
+                          <TableCell align="center">{stock.closingPrice}</TableCell>
+                          <TableCell align="center">{stock.date}</TableCell>
+                        </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
 
         <Modal
             aria-labelledby="transition-modal-title"
@@ -181,7 +262,10 @@ export default function Signals() {
                       <InputLabel>Stock</InputLabel>
                       <Select
                           label="Stock"
-                          onChange={(newValue) => setStock(newValue.target.value)}
+                          onChange={(newValue) => {
+                            setStock(newValue.target.value)
+                          }
+                          }
                           value={stock.abbreviation }
                       >
                         <MenuItem value="">
