@@ -513,7 +513,7 @@ export default function Trade() {
                             news.slice(0,3).map((e)=> (
                                 <>
                                     <h3>
-                                        <a href={e.url}> {e.headline}
+                                        <a href={e.url} target="_blank"> {e.headline}
                                         </a>
                                     </h3>
                                     <p>{e.summary}</p>
