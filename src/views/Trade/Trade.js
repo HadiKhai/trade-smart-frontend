@@ -236,7 +236,12 @@ export default function Trade() {
 
 
         if(stockById) {
-            a= ownStocks.find((e)=>(e.id===stockById.id)).share
+            if(ownStocks.find((e)=>(e.id===stockById.id))){
+                a = ownStocks.find((e) => (e.id === stockById.id)).share
+            }
+            else{
+                a = 0
+            }
         }
 
         if(stockBySearch){
