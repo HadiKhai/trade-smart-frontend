@@ -42,6 +42,67 @@ const postMessage = ({content,discussionId}) => {
         })
     })
 }
+const SendPrediction = (stockId, day, month, year, closingPrice) => {
+    let req = '/prediction'
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .post(req, {stockId, day, month, year, closingPrice}).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+
+const GetPrediction = (stockId) => {
+    let req = `/Prediction/Forecast/${stockId}`
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .get(req, ).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+const GetLeaderboard = (startingTimestamp) => {
+    let req ='/Prediction/Leaderboard'
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .post(req,{startingTimestamp} ).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+const GenerateDevKey = () => {
+    let req = '/User/dev-token'
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .post(req, {}).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+const DeleteDevKey = () => {
+    let req = '/User/dev-token'
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .delete(req, ).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
 
 const GetDiscussion = (discussionId) => {
     let req = `/Discussion/${discussionId}`
@@ -213,5 +274,10 @@ export {
     GetTrade,
     GetOwnStocks,
     PostTrade,
-    GetGeneralNews
+    GetGeneralNews,
+    GenerateDevKey,
+    DeleteDevKey,
+    SendPrediction,
+    GetPrediction,
+    GetLeaderboard
 };

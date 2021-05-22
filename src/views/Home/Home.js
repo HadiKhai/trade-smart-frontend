@@ -217,8 +217,6 @@ export default function Home() {
                                                     <Button>Trade</Button>
                                                 </Link>
                                             </TableCell>
-
-
                                         </TableRow>
                                     ))}
                                 </TableBody>
