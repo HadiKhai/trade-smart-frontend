@@ -10,7 +10,7 @@ export const getTrades = () => (dispatch) => {
         GetTrade().then((res)=>{
             dispatch({
                 type: TRADE_SUCCESS,
-                payload: res
+                payload: res.reverse()
             });
             resolve(res);
         }).catch((err)=> {

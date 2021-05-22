@@ -160,6 +160,21 @@ const GetTrade = () => {
     })
 }
 
+const PostTrade = ({type,stockId,quantity}) => {
+
+    let req = "/Trade"
+
+    return new Promise((resolve, reject) => {
+        axiosInstance().post(req,{
+            type,stockId,quantity
+        }).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+
 const GetStockNews = ({symbol,from,to}) => {
 
     let req = `company-news?symbol=${symbol}&from=${from}&to=${to}&token=c2ipksaad3i8gi7prg70`
@@ -185,5 +200,6 @@ export {
     GetUserDetails,
     postMessage,
     GetTrade,
-    GetOwnStocks
+    GetOwnStocks,
+    PostTrade
 };
