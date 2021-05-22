@@ -158,6 +158,7 @@ export default function Home() {
 
         return [year, month, day].join('-');
     }
+
     useEffect( () => {
         async function fetchMyAPI() {
             let today = new Date();

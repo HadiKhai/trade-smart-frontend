@@ -14,9 +14,9 @@ import Card from "../../components/Card/Card";
 import StockTable from "../../components/Table/StockTable";
 import {useParams} from "react-router";
 import TradingViewWidget, {BarStyles, Themes} from "react-tradingview-widget";
-import {TextField} from "@material-ui/core";
+import {Divider, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import {GetStocks, PostTrade} from "../../api/queries";
+import {GetStockNews, GetStocks, PostTrade} from "../../api/queries";
 import {infoColor} from "../../assets/jss/material-dashboard-react";
 import {useStocks} from "../../store/hooks/stocks/useStocks";
 import {useUser} from "../../store/hooks/user/useUser";
@@ -171,7 +171,7 @@ export default function Trade() {
     const [amountBuyUSD,setAmountBuyUSD] = useState('')
     const [amountSell,setAmountSell] = useState('')
     const [amountSellUSD,setAmountSellUSD] = useState('')
-
+    const [news,setNews] = useState([])
     const icon = () => {
         if (search) {
             return (<CloseIcon onClick={() => {
@@ -264,6 +264,38 @@ export default function Trade() {
         })
     }
 
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    useEffect( () => {
+        let today = new Date();
+        let yesterday = new Date();
+        yesterday.setDate(today. getDate() - 1);
+        if(findStock()) {
+            GetStockNews({
+                symbol: findStock().abbreviation,
+                from: formatDate(yesterday),
+                to: formatDate(today)
+            }).then((e) => {
+                setNews(e)
+                if(e.length===0){
+                    setNews([])
+                }
+            })
+        }
+    },[stocks,stockSearch,trades,ownStocks])
+
     const postYourTradeSell = () => {
         PostTrade({type:"sell",stockId:findStock().id,quantity:amountSell}).then(()=> {
             console.log("done")
@@ -272,6 +304,7 @@ export default function Trade() {
             getUserDetails({id:userId})
         })
     }
+
     return (
         <GridContainer>
             <GridItem xs={12} sm={12} md={12} >
@@ -295,6 +328,7 @@ export default function Trade() {
                 </Box>
             </GridItem>
             {showGraphs() &&
+                <>
             <GridItem xs={12} sm={12} md={12}>
                 <Box display="flex" align="left" flexdirection="row">
                     <Box>
@@ -464,6 +498,35 @@ export default function Trade() {
                     </Box>
                 </Box>
             </GridItem>
+            <GridItem xs={12} md={12} lg={12} style={{
+                marginRight:15
+            }}>
+                <Card>
+
+                    <CardHeader color="info">
+                        <h4 className={classes.cardTitleWhite}>{findStock().name} News</h4>
+                    </CardHeader>
+                    <CardBody>
+                        {
+                            news.length!==0 &&
+                                findStock() &&
+                            news.slice(0,3).map((e)=> (
+                                <>
+                                    <h3>
+                                        <a href={e.url}> {e.headline}
+                                        </a>
+                                    </h3>
+                                    <p>{e.summary}</p>
+                                    <Divider/>
+                                </>
+
+
+                            ))
+                        }
+                    </CardBody>
+                </Card>
+            </GridItem>
+            </>
             }
         </GridContainer>
     );
