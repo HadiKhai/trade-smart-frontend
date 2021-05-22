@@ -34,6 +34,8 @@ import Home from "views/Home/Home";
 import Portfolio from "views/Portfolio/Portfolio";
 import Trade from "./views/Trade/Trade";
 import DiscussionID from "./views/Discussion/DiscussionID";
+import {Equalizer} from "@material-ui/icons";
+import Leaderboard from "./views/Leaderboard/Leaderboard";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -87,7 +89,13 @@ const dashboardRoutes = [
     component: Portfolio,
     layout: "/app"
   },
-
+    {
+        path: "/leaderboard",
+        name: "Leaderboard",
+        icon: Equalizer,
+        component: Leaderboard,
+        layout: "/app"
+    },
 
 ];
 
