@@ -54,6 +54,31 @@ const SendPrediction = (stockId, day, month, year, closingPrice) => {
         })
     })
 }
+
+const GetPrediction = (stockId) => {
+    let req = `/Prediction/Forecast/${stockId}`
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .get(req, ).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+const GetLeaderboard = (startingTimestamp) => {
+    let req ='/Prediction/Leaderboard'
+    return new Promise ((resolve, reject) =>{
+
+        axiosInstance()
+            .post(req,{startingTimestamp} ).then((res)=> {
+            resolve(res.data)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
 const GenerateDevKey = () => {
     let req = '/User/dev-token'
     return new Promise ((resolve, reject) =>{
@@ -240,5 +265,7 @@ export {
     PostTrade,
     GenerateDevKey,
     DeleteDevKey,
-    SendPrediction
+    SendPrediction,
+    GetPrediction,
+    GetLeaderboard
 };
