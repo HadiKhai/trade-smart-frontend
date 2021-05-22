@@ -106,6 +106,19 @@ const GetStocks = () => {
     })
 }
 
+const GetOwnStocks = () => {
+    let req = '/Stock/Own';
+
+    return new Promise ((resolve, reject) => {
+        axiosInstance().get(req).then((res)=> {
+            let result = res.data
+            resolve(result)
+        }).catch((err)=> {
+            reject(err)
+        })
+    })
+}
+
 const GetUserDetails = ({id}) => {
     let req = `/User/${id}`;
 
@@ -134,7 +147,18 @@ const GetStockInfo = ({symbol}) => {
     })
 }
 
+const GetTrade = () => {
 
+    let req = "/Trade/Own"
+
+    return new Promise((resolve, reject) => {
+        axiosInstance().get(req).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
 
 const GetStockNews = ({symbol,from,to}) => {
 
@@ -159,5 +183,7 @@ export {
     GetDiscussion,
     GetDiscussionMessages,
     GetUserDetails,
-    postMessage
+    postMessage,
+    GetTrade,
+    GetOwnStocks
 };

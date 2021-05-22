@@ -111,9 +111,11 @@ export default function Sidebar(props) {
   var links = (
     <List className={classes.list}>
       {routes.map((prop, key) => {
+
           const path = prop.path
 
-          const temp = "/"+path.split("/")[1]
+
+          let temp = "/"+path.split("/")[1]
           // con
           //     "/"+prop.path.split("/")[1]
           //
@@ -126,25 +128,27 @@ export default function Sidebar(props) {
           [" " + classes.blueFont]: !activeRoute(prop.layout + temp)
         });
 
-        return (
-          <NavLink
-            to={prop.layout + prop.path}
-            className={classes.item}
-            activeClassName="active"
-            key={key}
-          >
-            <ListItem button className={classes.itemLink + listItemClasses}>
-                <prop.icon
-                  className={classNames(classes.itemIcon, whiteFontClasses)}
-                />
-              <ListItemText
-                primary={prop.name}
-                className={classNames(classes.itemText, whiteFontClasses)}
-                disableTypography={true}
-              />
-            </ListItem>
-          </NavLink>
-        );
+        if(temp!=="/discussion") {
+            return (
+                <NavLink
+                    to={prop.layout + prop.path}
+                    className={classes.item}
+                    activeClassName="active"
+                    key={key}
+                >
+                    <ListItem button className={classes.itemLink + listItemClasses}>
+                        <prop.icon
+                            className={classNames(classes.itemIcon, whiteFontClasses)}
+                        />
+                        <ListItemText
+                            primary={prop.name}
+                            className={classNames(classes.itemText, whiteFontClasses)}
+                            disableTypography={true}
+                        />
+                    </ListItem>
+                </NavLink>
+            );
+        }
       })}
 
     </List>

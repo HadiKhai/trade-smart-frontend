@@ -1,9 +1,8 @@
-import stocks from "./stocks";
-import ownStocks from "./ownStocks";
+import trade from "./trade";
 
 import initialState from "./initialState";
 
-const reducers = [stocks,ownStocks];
+const reducers = [trade];
 
 export default function reducer(state = initialState, action) {
     let newState;

@@ -197,7 +197,7 @@ export default function Trade() {
 
 
     const showGraphs = () => {
-        if((id!==":stockId" && id!=="" )|| findStockByName(stockSearch)!==undefined){
+        if(findStockByName(stockSearch) || findStockById(id)){
             return true
         }
         return false
@@ -214,6 +214,8 @@ export default function Trade() {
             return stockById
         }
     }
+
+    console.log(findStockById(id),findStockByName(stockSearch))
     return (
         <GridContainer>
             <GridItem xs={12} sm={12} md={12} >

@@ -1,33 +1,27 @@
 import {useCallback} from 'react';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
-import {getStocks} from "../../actions/stock/stocks";
-import {getOwnStocks} from "../../actions/stock/ownStocks";
-export function useStocks() {
+import {getTrades} from "../../actions/trade/trade";
+export function useTrade() {
 
     const dispatch = useDispatch();
 
-    const {stocks,error,loading,ownStocks} = useSelector(
+    const {trades,error,loading} = useSelector(
         (state) => ({
-            stocks: state.stocks.stocks,
-            error: state.stocks.error,
-            loading: state.stocks.loading,
-            ownStocks: state.stocks.ownStocks
+            trades: state.trade.trades,
+            error: state.trade.error,
+            loading: state.trade.loading
+
         }),
         shallowEqual,
     );
 
     const boundAction1 = useCallback(
         () => {
-            return dispatch(getStocks());
+            return dispatch(getTrades())
         },
         [dispatch],
     );
 
-    const boundAction2 = useCallback(
-        ()=> {
-            return dispatch(getOwnStocks());
-        }
-    )
     // const boundAction2 = useCallback(
     //     () => {
     //         return dispatch(logout());
@@ -48,13 +42,11 @@ export function useStocks() {
     //     },[dispatch]
     // )
 
-     return {
-            stocks,
-            loading,
-            error,
-            getStocks: boundAction1,
-            getOwnStocks:boundAction2,
-            ownStocks
+    return {
+        trades,
+        loading,
+        error,
+        getTrade: boundAction1,
         // logout: boundAction2,
         // register: boundAction3,
         // reloadToken: boundAction4

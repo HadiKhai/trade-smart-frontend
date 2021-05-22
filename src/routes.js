@@ -73,6 +73,13 @@ const dashboardRoutes = [
     component: Discussion,
     layout: "/app"
   },
+    {
+        path: "/discussion/:discussionId?",
+        name: "DiscussionDetail",
+        icon: ShowChartOutlinedIcon,
+        component: DiscussionID,
+        layout: "/app"
+    },
   {
     path: "/portfolio",
     name: "Portfolio",
