@@ -1,8 +1,7 @@
 const initialState = {
-    stocks:[],
+    trades:[],
     loading:false,
-    error:"",
-    ownStocks: []
+    error:""
 };
 
 export default initialState;

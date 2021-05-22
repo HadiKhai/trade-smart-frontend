@@ -16,6 +16,8 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 import {useAuth} from "../store/hooks/auth/useAuth";
 import {useStocks} from "../store/hooks/stocks/useStocks";
 import {useUser} from "../store/hooks/user/useUser";
+import {getTrades} from "../store/actions/trade/trade";
+import {useTrade} from "../store/hooks/trade/useTrade";
 
 
 
@@ -51,8 +53,9 @@ export default function Admin({ ...rest }) {
   const [color, setColor] = React.useState("blue");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const  {reloadToken,id} = useAuth()
-  const {getStocks} = useStocks()
+  const {getStocks,getOwnStocks} = useStocks()
   const {getUserDetails} =useUser()
+  const {getTrade} = useTrade()
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -65,6 +68,8 @@ export default function Admin({ ...rest }) {
   useEffect(()=> {
     if(id!=="") {
       getUserDetails({id})
+      getTrade()
+      getOwnStocks()
     }
   },[id])
 
