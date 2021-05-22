@@ -185,7 +185,7 @@ export default function Trade() {
 
     const findStockByName = (name) => {
         return stocks.find((x) => {
-            return x.name === name
+            return x.abbreviation === name
         })
     }
 
@@ -215,7 +215,7 @@ export default function Trade() {
         }
     }
 
-    console.log(findStockById(id),findStockByName(stockSearch))
+    console.log(findStock())
     return (
         <GridContainer>
             <GridItem xs={12} sm={12} md={12} >
@@ -250,6 +250,9 @@ export default function Trade() {
                     <Box flexGrow={1} display="flex" align="center" flexdirection="column" className={classes.bet}>
 
                         <Box p={3} flexGrow={1}>
+                            <h3>
+                                {findStock().c} $
+                            </h3>
                             <TextField
                                 id="standard-basic"
                                 className={classes.textf}
