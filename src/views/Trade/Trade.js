@@ -16,9 +16,12 @@ import {useParams} from "react-router";
 import TradingViewWidget, {BarStyles, Themes} from "react-tradingview-widget";
 import {TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import {GetStocks} from "../../api/queries";
+import {GetStocks, PostTrade} from "../../api/queries";
 import {infoColor} from "../../assets/jss/material-dashboard-react";
 import {useStocks} from "../../store/hooks/stocks/useStocks";
+import {useUser} from "../../store/hooks/user/useUser";
+import {useTrade} from "../../store/hooks/trade/useTrade";
+import {useAuth} from "../../store/hooks/auth/useAuth";
 
 const useStyle = makeStyles((theme) => ({
         cardCategoryWhite: {
@@ -157,11 +160,17 @@ export default function Trade() {
     const [stockSearch, setStockSearch] = useState('');
     const [search, setSearch] = useState(false)
     const {stockId} = useParams();
-
+    const [share,setShare] = useState(0)
     const [id,setId] = useState(stockId)
     const [symbol,setSymbol] = useState("")
-
-
+    const {ownStocks,getOwnStocks} = useStocks()
+    const {balance,getUserDetails} = useUser()
+    const {trades,getTrade} =useTrade()
+    const {id:userId} = useAuth()
+    const [amountBuy,setAmountBuy] = useState('')
+    const [amountBuyUSD,setAmountBuyUSD] = useState('')
+    const [amountSell,setAmountSell] = useState('')
+    const [amountSellUSD,setAmountSellUSD] = useState('')
 
     const icon = () => {
         if (search) {
@@ -174,14 +183,19 @@ export default function Trade() {
         }} style={{cursor: "pointer"}}/>)
     }
     // useEffect(()=> {
-    //     console.log(stockId)
-    //     if(stocks.length!==0 && stockId!==":stockId") {
-    //         const temp = stocks.filter((e) => e.id == stockId)[0]
-    //         setSymbol(temp.abbreviation)
-    //     }
-    //
-    // },[stocks])
-    //
+    //     // let a = 0
+    //     // if(findStock() && ownStocks) {
+    //     //     const temp = ownStocks.find((e)=>(e.id===findStock().id))
+    //     //     if(temp){
+    //     //         a = temp
+    //     //     }
+    //     // }
+    //     // setShare(a)
+    //     console.log("render")
+    // },[findStock()])
+
+
+
 
     const findStockByName = (name) => {
         return stocks.find((x) => {
@@ -210,12 +224,49 @@ export default function Trade() {
         if(stockBySearch){
             return stockBySearch
         }
-        if(id!=="") {
+        if(id!=="" && id!==":stockId") {
             return stockById
         }
     }
 
-    console.log(findStock())
+    useEffect(()=> {
+        let a = 0
+        const stockBySearch = findStockByName(stockSearch)
+        const stockById = findStockById(stockId)
+
+
+        if(stockById) {
+            a= ownStocks.find((e)=>(e.id===stockById.id)).share
+        }
+
+        if(stockBySearch){
+            if(ownStocks.find((e)=>(e.id===stockBySearch.id))) {
+                a = ownStocks.find((e) => (e.id === stockBySearch.id)).share
+            }else{
+                a = 0
+            }
+        }
+
+        setShare(a)
+    },[stocks,stockSearch,trades,ownStocks])
+
+    const postYourTradeBuy = () => {
+        PostTrade({type:"buy",stockId:findStock().id,quantity:amountBuy}).then(()=> {
+            console.log("done")
+            getTrade()
+            getOwnStocks()
+            getUserDetails({id:userId})
+        })
+    }
+
+    const postYourTradeSell = () => {
+        PostTrade({type:"sell",stockId:findStock().id,quantity:amountSell}).then(()=> {
+            console.log("done")
+            getTrade()
+            getOwnStocks()
+            getUserDetails({id:userId})
+        })
+    }
     return (
         <GridContainer>
             <GridItem xs={12} sm={12} md={12} >
@@ -250,42 +301,159 @@ export default function Trade() {
                     <Box flexGrow={1} display="flex" align="center" flexdirection="column" className={classes.bet}>
 
                         <Box p={3} flexGrow={1}>
-                            <h3>
-                                {findStock().c} $
-                            </h3>
-                            <TextField
-                                id="standard-basic"
-                                className={classes.textf}
-                                InputLabelProps={{
-                                    classes: {
-                                        root: classes.label
-                                    }
-                                }}
-                                placeholder="Amount"
-                                InputProps={{
-                                    classes: {
-                                        root: classes.input,
-                                        focused: classes.focused // we can't forget to pass this in or &$focused in our input class won't work
-                                    },
-                                }}
-                            />
-                            <Box display="flex" align="center" flexdirection="row">
-                                <Box flexGrow={1}>
+                            <h4>
+                                Current Price: {findStock().c} $
+                            </h4>
+                            <p>
+                                Shares: {share.toPrecision(3)}
+
+                            </p>
+                            <GridContainer>
+                                <GridItem xs={6} md={6} lg={6} style={{
+                                    marginRight:0
+                                }}>
+                                        <TextField
+                                            id="standard-basic"
+                                            className={classes.textf}
+                                            InputLabelProps={{
+                                                classes: {
+                                                    root: classes.label
+                                                }
+                                            }}
+                                            placeholder="Amount"
+                                            InputProps={{
+                                                classes: {
+                                                    root: classes.input,
+                                                    focused: classes.focused // we can't forget to pass this in or &$focused in our input class won't work
+                                                },
+                                            }}
+                                            value={amountBuy}
+                                            onChange={(newValue)=> {
+                                                const temp = parseFloat(balance/findStock().c)
+                                                console.log(temp)
+                                                if(newValue.target.value>temp){
+
+                                                    setAmountBuy(temp.toFixed(2))
+                                                    setAmountBuyUSD(balance)
+                                                }
+                                                else {
+                                                    const a = parseFloat(newValue.target.value * findStock().c)
+                                                    setAmountBuy(newValue.target.value)
+                                                    setAmountBuyUSD(a.toFixed(2))
+                                                }
+                                            }}
+                                        />
+                                        <TextField
+                                            id="standard-basic"
+                                            className={classes.textf}
+                                            InputLabelProps={{
+                                                classes: {
+                                                    root: classes.label
+                                                }
+                                            }}
+                                            placeholder="USD Amount"
+                                            InputProps={{
+                                                classes: {
+                                                    root: classes.input,
+                                                    focused: classes.focused // we can't forget to pass this in or &$focused in our input class won't work
+                                                },
+                                            }}
+                                            value={amountBuyUSD}
+                                            onChange={(newValue)=> {
+                                                const temp = balance/findStock().c
+                                                if(newValue.target.value>balance){
+                                                    setAmountBuy(temp.toFixed(2))
+                                                    setAmountBuyUSD(balance.toFixed(2))
+                                                }
+                                                else {
+                                                    setAmountBuyUSD(newValue.target.value)
+                                                    setAmountBuy(parseFloat(newValue.target.value / findStock().c).toFixed(2))
+                                                }
+                                            }}
+                                        />
                                     <Button
                                         className={classes.buy}
                                         variant="contained"
+                                        onClick={() => {
+                                            postYourTradeBuy()
+                                            setAmountBuyUSD(0)
+                                            setAmountBuy(0)
+                                        }}
                                     >
                                         Buy
                                     </Button>
-                                </Box>
-                                <Box flexGrow={1}>
+                                </GridItem>
+                                <GridItem xs={6} md={6} lg={6} style={{
+                                    marginRight:0
+                                }}>
+                                    <TextField
+                                        id="standard-basic"
+                                        className={classes.textf}
+                                        InputLabelProps={{
+                                            classes: {
+                                                root: classes.label
+                                            }
+                                        }}
+                                        placeholder="Amount"
+                                        InputProps={{
+                                            classes: {
+                                                root: classes.input,
+                                                focused: classes.focused // we can't forget to pass this in or &$focused in our input class won't work
+                                            },
+                                        }}
+                                        value={amountSell}
+                                        onChange={(newValue)=> {
+                                            if(newValue.target.value>share){
+                                                setAmountSell(share.toFixed(2))
+                                                setAmountSellUSD(parseFloat(share*findStock().c).toFixed(2))
+                                            }
+                                            else {
+                                                setAmountSellUSD(parseFloat(newValue.target.value*findStock().c).toFixed(2))
+                                                setAmountSell(newValue.target.value)
+                                            }
+
+                                        }}
+                                    />
+                                    <TextField
+                                        id="standard-basic"
+                                        className={classes.textf}
+                                        InputLabelProps={{
+                                            classes: {
+                                                root: classes.label
+                                            }
+                                        }}
+                                        placeholder="USD Amount"
+                                        InputProps={{
+                                            classes: {
+                                                root: classes.input,
+                                                focused: classes.focused // we can't forget to pass this in or &$focused in our input class won't work
+                                            },
+                                        }}
+                                        value={amountSellUSD}
+                                        onChange={(newValue)=> {
+                                            if(newValue.target.value>share*findStock().c){
+                                                setAmountSell(share.toFixed(2))
+                                                setAmountSellUSD(parseFloat(share*findStock().c).toFixed(2))
+                                            }
+                                            else {
+                                                setAmountSellUSD(newValue.target.value)
+                                                setAmountSell(parseFloat(newValue.target.value / findStock().c).toFixed(2))
+                                            }
+                                        }}
+                                    />
                                     <Button
                                         className={classes.sell}
                                         variant="contained"
+                                        onClick={() => {
+                                            postYourTradeSell()
+                                            setAmountSellUSD(0)
+                                            setAmountSell(0)
+                                        }}
                                     >
-                                        Sell
-                                    </Button></Box>
-                            </Box>
+                                        sell
+                                    </Button>
+                                </GridItem>
+                            </GridContainer>
 
                         </Box>
                     </Box>

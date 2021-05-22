@@ -22,6 +22,7 @@ import Box from "@material-ui/core/Box";
 import {useAuth} from "../../store/hooks/auth/useAuth";
 import {CheckUsername, CheckEmail} from "../../api/queries";
 import {useStocks} from "../../store/hooks/stocks/useStocks";
+import {useUser} from "../../store/hooks/user/useUser";
 
 
 const useStyles = makeStyles(styles);
@@ -95,6 +96,7 @@ export default function Header(props) {
 
   const {login,register,logout,id} = useAuth()
   const {stocks} = useStocks()
+  const {balance} = useUser()
   const {color} = props;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -210,9 +212,9 @@ export default function Header(props) {
   }
 
   const getImportantStocks = () => {
-    const allowed = ["apple","facebook","amazon"]
+    const allowed = ["AAPL","GOOG","TSLA"]
     if(stocks.length!==0){
-      return stocks.filter((a)=> allowed.includes(a.name)
+      return stocks.filter((a)=> allowed.includes(a.abbreviation)
       )
     }
     return []
@@ -240,6 +242,11 @@ export default function Header(props) {
                       </Box>
                     ))
                   }
+                  <Box p={1} flexGrow={1}>
+                    <ThemeProvider theme={theme}>
+                      <Typography variant="subtitle2">Your Wallet: {balance.toFixed(3)}$</Typography>
+                    </ThemeProvider>
+                  </Box>
                 </Box>
                 <Box>
                   {id !== ""?

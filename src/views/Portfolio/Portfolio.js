@@ -137,8 +137,8 @@ export default function Portfolio({filter}) {
                             <TableCell align="center">Stock Symbol</TableCell>
                             <TableCell align="center">Current Price</TableCell>
                             <TableCell align="center">Shares</TableCell>
+                            <TableCell align="center">Value</TableCell>
                             <TableCell align="center">Trade</TableCell>
-
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -149,6 +149,8 @@ export default function Portfolio({filter}) {
                                 <TableCell align="center">{stock.abbreviation} </TableCell>
                                 <TableCell align="center">{stocks.find((a)=>a.name===stock.name).c}</TableCell>
                                 <TableCell align="center">{stock.share}</TableCell>
+                                <TableCell align="center">{parseFloat(stocks.find((a)=>a.name===stock.name).c*stock.share).toFixed(2)}</TableCell>
+
                                 <TableCell align="center">
                                     <Link
                                         to={"/app/trade/" + stock.id}>
