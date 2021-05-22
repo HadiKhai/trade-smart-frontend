@@ -238,7 +238,6 @@ export {
     GetTrade,
     GetOwnStocks,
     PostTrade,
-    GetOwnStocks,
     GenerateDevKey,
     DeleteDevKey,
     SendPrediction
