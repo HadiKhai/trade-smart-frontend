@@ -9,7 +9,7 @@ import {TableCell, TableContainer, TextField,} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
  import {useStocks} from "../../store/hooks/stocks/useStocks";
- import {GetStockInfo} from "../../api/queries";
+ import {GetStockInfo, GetStockNews} from "../../api/queries";
  import GridContainer from "../../components/Grid/GridContainer";
  import GridItem from "../../components/Grid/GridItem";
  import Table from "@material-ui/core/Table";
@@ -21,6 +21,7 @@ import Button from "@material-ui/core/Button";
  import CardBody from "../../components/Card/CardBody";
  import StockTable from "../../components/Table/StockTable";
  import Card from "../../components/Card/Card";
+ import { Divider } from '@material-ui/core';
 
 const useStyle = makeStyles((theme) => ({
         cardCategoryWhite: {
@@ -142,7 +143,48 @@ export default function Home() {
     const classes = useStyle();
 
     const {stocks} = useStocks()
+    const [filteredStocks,setFilteredStocks] = useState([])
+    const [news,setNews] = useState({})
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
 
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+    useEffect( () => {
+        async function fetchMyAPI() {
+            let today = new Date();
+            let yesterday = new Date();
+            yesterday.setDate(today. getDate() - 1);
+            const obj = {}
+            for (const stock of filteredStocks) {
+                const e = await GetStockNews({symbol:stock.abbreviation,from:formatDate(yesterday),to:formatDate(today) })
+                obj[stock.abbreviation] = e
+            }
+            setNews(obj)
+        }
+
+       fetchMyAPI()
+
+    },[filteredStocks])
+
+    useEffect(()=> {
+        if(stocks.length!==0) {
+            const temp = stocks.sort((a, b) => parseFloat(b.change) - parseFloat(a.change)).slice(0, 2)
+            setFilteredStocks(temp)
+        }
+    },[stocks])
+
+    useEffect(()=> {
+        console.log(news)
+    },[news])
 
     return (
         <GridContainer>
@@ -185,10 +227,38 @@ export default function Home() {
                     </CardBody>
                 </Card>
             </GridItem>
-            <GridItem xs={12} sm={12} md={12}>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={12}>
-            </GridItem>
+            {filteredStocks.length!==0 &&
+                filteredStocks.map((stock)=> (
+                    <GridItem xs={6} sm={6} md={6} style={{
+                        marginRight:0
+
+                    }}>
+                        <Card>
+
+                            <CardHeader color="info">
+                                <h4 className={classes.cardTitleWhite}>{stock.name} News</h4>
+                            </CardHeader>
+                            <CardBody>
+                                {
+                                    Object.keys(news).length!==0 &&
+                                    news[stock.abbreviation].slice(0,3).map((e)=> (
+                                        <>
+                                            <h3>
+                                                <a href={e.url}> {e.headline}
+                                                </a>
+                                            </h3>
+                                            <p>{e.summary}</p>
+                                            <Divider/>
+                                        </>
+
+
+                                    ))
+                                }
+                            </CardBody>
+                        </Card>
+                    </GridItem>
+                )
+            )}
         </GridContainer>
     );
 }

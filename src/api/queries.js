@@ -175,6 +175,17 @@ const PostTrade = ({type,stockId,quantity}) => {
     })
 }
 
+const GetGeneralNews = () => {
+    let req = "news?category=general&token=c2ipksaad3i8gi7prg70"
+    return new Promise((resolve, reject) => {
+        axiosStockAPI.get(req).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+
 const GetStockNews = ({symbol,from,to}) => {
 
     let req = `company-news?symbol=${symbol}&from=${from}&to=${to}&token=c2ipksaad3i8gi7prg70`
@@ -201,5 +212,6 @@ export {
     postMessage,
     GetTrade,
     GetOwnStocks,
-    PostTrade
+    PostTrade,
+    GetGeneralNews
 };
