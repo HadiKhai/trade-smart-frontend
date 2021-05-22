@@ -25,6 +25,7 @@ import {TableContainer} from "@material-ui/core";
 import {useStocks} from "../../store/hooks/stocks/useStocks";
 import CardHeader from "../../components/Card/CardHeader";
 import CardBody from "../../components/Card/CardBody";
+import {useTrade} from "../../store/hooks/trade/useTrade";
 
 // core components
 const useStyle = makeStyles((theme) => ({
@@ -70,21 +71,6 @@ const useStyle = makeStyles((theme) => ({
         myCardWrapper: {
             margin: '10px',
         },
-        cardTitleWhite: {
-            color: "#FFFFFF",
-            marginTop: "0px",
-            minHeight: "auto",
-            fontWeight: "300",
-            fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-            marginBottom: "3px",
-            textDecoration: "none",
-            "& small": {
-                color: "#777",
-                fontSize: "65%",
-                fontWeight: "400",
-                lineHeight: "1"
-            }
-        },
     }
 ))
 
@@ -96,17 +82,15 @@ export default function Portfolio({filter}) {
     const {userName, firstName, lastName, email, balance} = useUser();
 
     const [filteredStocks,setFilteredStock] = useState([])
-    const {stocks} = useStocks()
-
+    const {stocks,ownStocks} = useStocks()
+    const {trades} = useTrade()
     useEffect(()=> {
         const temp = stocks.filter((e) => e.name.startsWith(filter))
         setFilteredStock(temp)
     },[filter,stocks])
 
     const colorChange = (stock) => {
-        const currentPrice = stock.c
-        const closingPrice =stock.pc
-        if((currentPrice-closingPrice)<0){
+        if(stock.type==="sell"){
             return "#FF605C"
         }
         else{
@@ -152,26 +136,19 @@ export default function Portfolio({filter}) {
                             <TableCell align="center">Stock Name</TableCell>
                             <TableCell align="center">Stock Symbol</TableCell>
                             <TableCell align="center">Current Price</TableCell>
-                            <TableCell align="center">Highest</TableCell>
-                            <TableCell align="center">Lowest</TableCell>
-                            <TableCell align="center">Opening Price</TableCell>
-                            <TableCell align="center">Previous Closing Price</TableCell>
-                            <TableCell align="center">Change</TableCell>
+                            <TableCell align="center">Shares</TableCell>
                             <TableCell align="center">Trade</TableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {stocks.length !==0 &&
-                        filteredStocks.map((stock) => (
+                        {ownStocks.length !==0 && stocks.length !==0 &&
+                        ownStocks.map((stock) => (
                             <TableRow  className={classes.root}>
                                 <TableCell align="center">{stock.name} </TableCell>
                                 <TableCell align="center">{stock.abbreviation} </TableCell>
-                                <TableCell align="center">{stock.c}</TableCell>
-                                <TableCell align="center">{stock.h}</TableCell>
-                                <TableCell align="center">{stock.l}</TableCell>
-                                <TableCell align="center">{stock.o}</TableCell>
-                                <TableCell align="center">{stock.pc}</TableCell>
-                                <TableCell align="center" style={{color:colorChange(stock)}}>{((stock.c-stock.pc)*100/stock.pc).toPrecision(2)}%</TableCell>
+                                <TableCell align="center">{stocks.find((a)=>a.name===stock.name).c}</TableCell>
+                                <TableCell align="center">{stock.share}</TableCell>
                                 <TableCell align="center">
                                     <Link
                                         to={"/app/trade/" + stock.id}>
@@ -203,28 +180,24 @@ export default function Portfolio({filter}) {
                                     <TableRow>
                                         <TableCell align="center">Stock Name</TableCell>
                                         <TableCell align="center">Stock Symbol</TableCell>
-                                        <TableCell align="center">Current Price</TableCell>
-                                        <TableCell align="center">Highest</TableCell>
-                                        <TableCell align="center">Lowest</TableCell>
-                                        <TableCell align="center">Opening Price</TableCell>
-                                        <TableCell align="center">Previous Closing Price</TableCell>
-                                        <TableCell align="center">Change</TableCell>
+                                        <TableCell align="center">Shares</TableCell>
+                                        <TableCell align="center">Price at Transaction</TableCell>
+                                        <TableCell align="center">Date</TableCell>
+                                        <TableCell align="center">Type</TableCell>
                                         <TableCell align="center">Trade</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {stocks.length !==0 &&
-                                    filteredStocks.map((stock) => (
+                                    {trades.length !==0 && stocks.length!==0 &&
+                                    trades.map((stock) => (
                                         <TableRow  className={classes.root}>
-                                            <TableCell align="center">{stock.name} </TableCell>
-                                            <TableCell align="center">{stock.abbreviation} </TableCell>
-                                            <TableCell align="center">{stock.c}</TableCell>
-                                            <TableCell align="center">{stock.h}</TableCell>
-                                            <TableCell align="center">{stock.l}</TableCell>
-                                            <TableCell align="center">{stock.o}</TableCell>
-                                            <TableCell align="center">{stock.pc}</TableCell>
-                                            <TableCell align="center" style={{color:colorChange(stock)}}>{((stock.c-stock.pc)*100/stock.pc).toPrecision(2)}%</TableCell>
-                                            <TableCell align="center">
+                                            <TableCell align="center">{stocks.find((a) => a.id === stock.stockId).name}</TableCell>
+                                            <TableCell align="center">{stocks.find((a) => a.id === stock.stockId).abbreviation}</TableCell>
+                                            <TableCell align="center">{stock.quantity}</TableCell>
+                                            <TableCell align="center">{stock.price}</TableCell>
+                                            <TableCell align="center">{stock.timestamp}</TableCell>
+                                            <TableCell align="center" style={{color:colorChange(stock)}}>{stock.type}</TableCell>
+                                             <TableCell align="center">
                                                 <Link
                                                     to={"/app/trade/" + stock.id}>
                                                     <Button>
