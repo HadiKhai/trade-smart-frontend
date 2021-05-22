@@ -96,6 +96,7 @@ export default function Leaderboard() {
                             <Table  stickyHeader style={{backgroundColor: "#f0f0f0"}}>
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell align="center">Rank</TableCell>
                                         <TableCell align="center">Username</TableCell>
                                         <TableCell align="center">Score</TableCell>
                                     </TableRow>
@@ -104,6 +105,7 @@ export default function Leaderboard() {
                                     {leaderboard?.length !==0 && leaderboard?.length !==0 &&
                                     leaderboard?.map((user) => (
                                         <TableRow key={user.userId} className={classes.root}>
+                                            <TableCell align="center">{leaderboard.indexOf(user)+1} </TableCell>
                                             <TableCell align="center">{user.username} </TableCell>
                                             <TableCell align="center">{user.score} </TableCell>
                                         </TableRow>
